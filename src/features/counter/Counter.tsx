@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import React, { useState } from 'react';
 
-import { useAppSelector, useAppDispatch } from '../../hooks'
+import { useAppSelector, useAppDispatch } from '../../common/hooks';
 import {
   decrement,
   increment,
@@ -8,15 +8,21 @@ import {
   incrementAsync,
   incrementIfOdd,
   selectCount,
-} from './counterSlice'
-import styles from './Counter.module.css'
+} from './counterSlice';
+import styles from './Counter.module.css';
+import { useRouter } from 'next/router';
 
 function Counter() {
-  const dispatch = useAppDispatch()
-  const count = useAppSelector(selectCount)
-  const [incrementAmount, setIncrementAmount] = useState('2')
+  const dispatch = useAppDispatch();
+  const count = useAppSelector(selectCount);
+  const [incrementAmount, setIncrementAmount] = useState('2');
 
-  const incrementValue = Number(incrementAmount) || 0
+  const incrementValue = Number(incrementAmount) || 0;
+  const router = useRouter();
+  function goToLogin(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+    router.push('/login');
+  }
 
   return (
     <div>
@@ -62,9 +68,12 @@ function Counter() {
         >
           Add If Odd
         </button>
+        <a href="#" onClick={goToLogin}>
+          router push
+        </a>
       </div>
     </div>
-  )
+  );
 }
 
-export default Counter
+export default Counter;

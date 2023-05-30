@@ -3,17 +3,8 @@ import Head from 'next/head';
 
 import Counter from '../features/counter/Counter';
 import styles from '../styles/Home.module.css';
-import { useAppSelector } from '../common/hooks';
-import { userLoggedIn } from '../features/auth/authSlice';
-import { useEffect } from 'react';
 
 const IndexPage: NextPage = () => {
-  const userInfo = useAppSelector(userLoggedIn);
-
-  useEffect(() => {
-    console.log('abc1', userInfo);
-  }, []);
-
   return (
     <div className={styles.container}>
       <Head>
