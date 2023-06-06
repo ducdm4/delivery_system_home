@@ -11,12 +11,12 @@ export interface APIInfo {
   header?: object;
 }
 
-export interface KeyStringValue {
+export interface KeyValue {
   [key: string]: any;
 }
 
 export interface SuccessResponse {
-  data: KeyStringValue;
+  data: KeyValue;
   statusCode: number;
 }
 
@@ -24,4 +24,8 @@ export interface FailedResponse {
   statusCode: number;
   error: string;
   message: string;
+}
+
+export interface TableListRefObject {
+  handleSearch: () => void;
 }

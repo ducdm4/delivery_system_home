@@ -1,44 +1,44 @@
 import {
   APIInfo,
   FailedResponse,
-  KeyStringValue,
+  KeyValue,
   SuccessResponse,
 } from '../config/interfaces';
 import { toast } from 'react-toastify';
-import Dict = NodeJS.Dict;
+import Router from 'next/router';
 
 export async function useAPI(
   apiInfo: APIInfo,
   isAuthorized = true,
-): Promise<KeyStringValue> {
-  const baseHeader: KeyStringValue = {
+): Promise<KeyValue> {
+  const baseHeader: KeyValue = {
     'Content-Type': 'application/json',
   };
   if (isAuthorized)
     baseHeader['Authorization'] = `Bearer ${localStorage.getItem(
       process.env.NEXT_PUBLIC_API_KEY as string,
     )}`;
-  const returnData: KeyStringValue = {
+  const returnData: KeyValue = {
     statusCode: 200,
-    data: {} as KeyStringValue,
+    data: {} as KeyValue,
     message: '',
     isSuccess: true,
   };
   try {
+    const apiInit: KeyValue = {
+      method: apiInfo.method,
+      headers: {
+        ...baseHeader,
+        ...apiInfo.header,
+      },
+    };
+    if (JSON.stringify(apiInfo.data))
+      apiInit.body = JSON.stringify(apiInfo.data);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}:${process.env.NEXT_PUBLIC_API_PORT}/${apiInfo.url}`,
-      {
-        method: apiInfo.method,
-        headers: {
-          ...baseHeader,
-          ...apiInfo.header,
-        },
-        body: JSON.stringify(apiInfo.data || {}),
-      },
+      apiInit,
     );
     const result = await response.json();
-    console.log('ducdm5 result', result);
-    console.log('ducdm5 response', response);
 
     if (!response.ok) {
       const res = result as FailedResponse;
@@ -51,17 +51,15 @@ export async function useAPI(
       returnData.data = res.data;
     }
   } catch (e) {
-    console.log('ducdm5', e);
     returnData.isSuccess = false;
     returnData.message = 'Unknown Error';
   }
   return returnData;
 }
 
-function handleError(res: FailedResponse) {
-  console.log('ducdm7', res);
-  if (res.statusCode === 401) {
-    // TODO: Refresh token
+async function handleError(res: FailedResponse) {
+  if (res.statusCode === 401 || res.statusCode === 403) {
+    await Router.push('/admin/login');
   } else {
     toast(res.message, {
       hideProgressBar: true,

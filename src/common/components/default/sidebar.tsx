@@ -19,7 +19,8 @@ import {
   PowerIcon,
 } from '@heroicons/react/24/solid';
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 
 export default function Sidebar() {
   const [open, setOpen] = useState(0);
@@ -29,7 +30,10 @@ export default function Sidebar() {
   };
 
   return (
-    <Card className="fixed top-16 left-0 h-[calc(100vh-2rem)] w-full max-w-[20rem] px-4 bg-gray-200 rounded-none">
+    <Card className="z-20 fixed top-0 left-0 h-[calc(100vh)] w-full max-w-[20rem] px-4 bg-yellow-300 rounded-none">
+      <h2 className="my-8 cursor-pointer text-center lg:text-2xl font-bold">
+        DELIVERY SYSTEM
+      </h2>
       <List>
         <Accordion
           open={open === 1}
@@ -51,24 +55,28 @@ export default function Sidebar() {
                 <PresentationChartBarIcon className="h-5 w-5" />
               </ListItemPrefix>
               <Typography color="blue-gray" className="mr-auto font-normal">
-                Dashboard
+                Master data
               </Typography>
             </AccordionHeader>
           </ListItem>
           <AccordionBody className="py-1">
             <List className="p-0">
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Analytics
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Reporting
-              </ListItem>
+              <Link href="/admin/city">
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  City
+                </ListItem>
+              </Link>
+              <Link href="/admin/district">
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  District
+                </ListItem>
+              </Link>
               <ListItem>
                 <ListItemPrefix>
                   <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />

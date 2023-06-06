@@ -8,10 +8,6 @@ import { useEffect } from 'react';
 const IndexPage: NextPage = () => {
   const userInfo = useAppSelector(userLoggedIn);
 
-  useEffect(() => {
-    console.log('abc1', userInfo);
-  }, []);
-
   return (
     <>
       <Head>

@@ -1,35 +1,57 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import type { AppState, AppThunk } from '../../store';
-import { login, verifyUser } from './authAPI';
-import { APIResponse, LoginData } from '../../common/config/interfaces';
-import Dict = NodeJS.Dict;
+import { AppState, AppThunk } from '../../store';
+import { login, verifyUser, getSelfProfile } from './authAPI';
+import { KeyValue, LoginData } from '../../common/config/interfaces';
 
 export interface AuthState {
-  user: Dict<any>;
+  user: KeyValue;
   tokens: object;
   status: 'idle' | 'loading' | 'failed';
+  userDetail: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    dob: string;
+    gender: boolean;
+    phone: string;
+    profilePicture: KeyValue;
+    address: KeyValue;
+  };
 }
 
 const initialState: AuthState = {
   user: {},
   tokens: {},
   status: 'idle',
+  userDetail: {
+    email: '',
+    firstName: '',
+    lastName: '',
+    dob: '',
+    gender: true,
+    phone: '',
+    profilePicture: {},
+    address: {},
+  },
 };
 
 export const userLogin = createAsyncThunk(
   'auth/login',
-  async (loginInfo: LoginData): Promise<APIResponse> => {
+  async (loginInfo: LoginData) => {
     const response = await login(loginInfo);
     return response;
   },
 );
 
-export const verifyUserLogin = createAsyncThunk(
-  'auth/verify',
-  async (): Promise<APIResponse> => {
-    const response = await verifyUser();
-    return response;
+export const verifyUserLogin = createAsyncThunk('auth/verify', async () => {
+  const response = await verifyUser();
+  return response;
+});
+
+export const getLoggedInProfile = createAsyncThunk(
+  'auth/selfProfile',
+  async () => {
+    return await getSelfProfile();
   },
 );
 
@@ -48,18 +70,11 @@ export const authSlice = createSlice({
         if (response.isSuccess) {
           state.user = response.data['user'];
           state.tokens = response.data['tokens'];
-          const { accessToken, refreshToken } = state.tokens as {
+          const { accessToken } = state.tokens as {
             accessToken: string;
-            refreshToken: string;
           };
           if (process.env.NEXT_PUBLIC_API_KEY) {
             localStorage.setItem(process.env.NEXT_PUBLIC_API_KEY, accessToken);
-          }
-          if (process.env.NEXT_PUBLIC_API_REFRESH) {
-            localStorage.setItem(
-              process.env.NEXT_PUBLIC_API_REFRESH,
-              refreshToken,
-            );
           }
         }
       });
@@ -74,14 +89,24 @@ export const authSlice = createSlice({
         if (response.isSuccess) {
           state.user = response.data['user'];
         }
-        console.log('ducdm2', state.user);
-        console.log('ducdm3', response);
+      });
+
+    builder
+      .addCase(getLoggedInProfile.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getLoggedInProfile.fulfilled, (state, action) => {
+        state.status = 'idle';
+        const response = action.payload;
+        if (response.isSuccess) {
+          state.userDetail = response.data['userInfo'];
+        }
       });
   },
 });
 
 export const {} = authSlice.actions;
+export default authSlice.reducer;
 
 export const userLoggedIn = (state: AppState) => state.auth.user;
-
-export default authSlice.reducer;
+export const userLoading = (state: AppState) => state.auth.status;

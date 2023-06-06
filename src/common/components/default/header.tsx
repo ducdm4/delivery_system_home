@@ -264,11 +264,8 @@ export default function Header() {
   }, []);
 
   return (
-    <Navbar className="fixed bg-opacity-100 mx-auto shadow-none max-w-full backdrop-blur-0 rounded-none lg:pl-10 round lg:pr-60 bg-gray-200">
+    <Navbar className="z-10 fixed bg-opacity-100 mx-auto shadow-none max-w-full backdrop-blur-0 rounded-none lg:pl-10 round lg:pr-60 bg-yellow-400">
       <div className="relative mx-auto flex items-center text-blue-gray-900">
-        <h2 className="mr-4 ml-2 cursor-pointer lg:text-2xl font-bold">
-          DELIVERY SYSTEM
-        </h2>
         <IconButton
           size="sm"
           color="blue-gray"

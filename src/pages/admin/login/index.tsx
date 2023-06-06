@@ -4,10 +4,16 @@ import { useAppDispatch } from '../../../common/hooks';
 import { userLogin } from '../../../features/auth/authSlice';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { Button, Input } from '@material-tailwind/react';
+import { ValidateEmail } from '../../../common/functions';
 
 const LoginPage: NextPage = () => {
   const dispatch = useAppDispatch();
   const [inputs, setInputs] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
   const router = useRouter();
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -20,11 +26,55 @@ const LoginPage: NextPage = () => {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // TODO validate input
-    try {
-      const result = await dispatch(userLogin({ ...inputs, role: 1 })).unwrap();
-      await router.push('/admin');
-    } catch (e) {}
+    if (validate()) {
+      try {
+        const result = await dispatch(
+          userLogin({ ...inputs, role: 1 }),
+        ).unwrap();
+        if (result.isSuccess) {
+          await router.push('/admin');
+        }
+      } catch (e) {}
+    }
+  }
+
+  function validate() {
+    let isValid = true;
+    if (!inputs.email) {
+      setErrors((values) => {
+        return { ...values, email: 'Email cannot be empty' };
+      });
+      isValid = false;
+    } else if (!ValidateEmail(inputs.email)) {
+      setErrors((values) => {
+        return { ...values, email: 'Wrong email format' };
+      });
+      isValid = false;
+    } else {
+      setErrors((values) => {
+        return { ...values, email: '' };
+      });
+    }
+
+    if (!inputs.password) {
+      setErrors((values) => {
+        return { ...values, password: 'Password cannot be empty' };
+      });
+      isValid = false;
+    } else if (inputs.password.length < 6) {
+      setErrors((values) => {
+        return {
+          ...values,
+          password: 'Password must have at least 6 characters',
+        };
+      });
+      isValid = false;
+    } else {
+      setErrors((values) => {
+        return { ...values, password: '' };
+      });
+    }
+    return isValid;
   }
 
   return (
@@ -46,60 +96,41 @@ const LoginPage: NextPage = () => {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
-              </label>
               <div className="mt-2">
-                <input
+                <Input
+                  type="text"
                   name="email"
-                  type="email"
+                  label="Email"
+                  error={errors.email !== ''}
                   value={inputs.email || ''}
                   onChange={handleChange}
-                  autoComplete="email"
-                  required
-                  className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
+                <p className={'text-red-300 mt-0.5 ml-1 text-sm'}>
+                  {errors.email}
+                </p>
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-emerald-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
               <div className="mt-2">
-                <input
-                  name="password"
+                <Input
                   type="password"
-                  autoComplete="current-password"
+                  name="password"
+                  label="Password"
+                  error={errors.password !== ''}
                   value={inputs.password || ''}
-                  required
-                  minLength={6}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
+                <p className={'text-red-300 mt-0.5 ml-1 text-sm'}>
+                  {errors.password}
+                </p>
               </div>
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-emerald-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
+              <Button className={'w-full'} type="submit" color="green">
                 Sign in
-              </button>
+              </Button>
             </div>
           </form>
 
