@@ -11,7 +11,6 @@ import {
   AccordionBody,
 } from '@material-tailwind/react';
 import {
-  PresentationChartBarIcon,
   ShoppingBagIcon,
   UserCircleIcon,
   Cog6ToothIcon,
@@ -21,6 +20,11 @@ import {
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  NewspaperIcon,
+  RectangleStackIcon,
+  TruckIcon,
+} from '@heroicons/react/20/solid';
 
 export default function Sidebar() {
   const [open, setOpen] = useState(0);
@@ -52,7 +56,7 @@ export default function Sidebar() {
               className="border-b-0 p-3"
             >
               <ListItemPrefix>
-                <PresentationChartBarIcon className="h-5 w-5" />
+                <RectangleStackIcon className="h-5 w-5" />
               </ListItemPrefix>
               <Typography color="blue-gray" className="mr-auto font-normal">
                 Master data
@@ -81,11 +85,29 @@ export default function Sidebar() {
                 <ListItemPrefix>
                   <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                 </ListItemPrefix>
-                Projects
+                Ward
+              </ListItem>
+              <ListItem>
+                <ListItemPrefix>
+                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Route Config
+              </ListItem>
+              <ListItem>
+                <ListItemPrefix>
+                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Basic Config
               </ListItem>
             </List>
           </AccordionBody>
         </Accordion>
+        <ListItem>
+          <ListItemPrefix>
+            <NewspaperIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Order
+        </ListItem>
         <Accordion
           open={open === 2}
           icon={
@@ -103,10 +125,10 @@ export default function Sidebar() {
               className="border-b-0 p-3"
             >
               <ListItemPrefix>
-                <ShoppingBagIcon className="h-5 w-5" />
+                <TruckIcon className="h-5 w-5" />
               </ListItemPrefix>
               <Typography color="blue-gray" className="mr-auto font-normal">
-                E-Commerce
+                Station
               </Typography>
             </AccordionHeader>
           </ListItem>
@@ -129,9 +151,21 @@ export default function Sidebar() {
         </Accordion>
         <ListItem>
           <ListItemPrefix>
+            <UserCircleIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Employee
+        </ListItem>
+        <ListItem>
+          <ListItemPrefix>
+            <ShoppingBagIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Customer
+        </ListItem>
+        <ListItem>
+          <ListItemPrefix>
             <InboxIcon className="h-5 w-5" />
           </ListItemPrefix>
-          Inbox
+          Notifications
           <ListItemSuffix>
             <Chip
               value="14"
@@ -141,24 +175,6 @@ export default function Sidebar() {
               className="rounded-full"
             />
           </ListItemSuffix>
-        </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <UserCircleIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Profile
-        </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <Cog6ToothIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Settings
-        </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <PowerIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Log Out
         </ListItem>
       </List>
     </Card>

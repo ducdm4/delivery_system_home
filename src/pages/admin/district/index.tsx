@@ -16,17 +16,18 @@ import {
 } from '../../../common/config/interfaces';
 import { useRouter } from 'next/router';
 import {
-  deleteCityThunk,
-  getCityListFilter,
-  cityLoading,
-} from '../../../features/city/citySlice';
+  deleteDistrictThunk,
+  getDistrictListFilter,
+  districtLoading,
+} from '../../../features/district/districtSlice';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import DialogConfirm from '../../../common/components/default/dialogConfirm';
 import { toast } from 'react-toastify';
+import { getCityListFilter } from '../../../features/city/citySlice';
 
-const CityList: NextPage = () => {
+const DistrictList: NextPage = () => {
   const [tableConfig, setTableConfig] = useState({
-    url: '/city',
+    url: '/district',
     header: [
       {
         label: 'Name',
@@ -36,6 +37,10 @@ const CityList: NextPage = () => {
       {
         label: 'Search name',
         key: 'slug',
+      },
+      {
+        label: 'City',
+        key: 'city',
         isSort: true,
       },
       {
@@ -43,28 +48,34 @@ const CityList: NextPage = () => {
         key: '',
       },
     ],
-    filters: [],
+    filters: [
+      {
+        key: 'city',
+        label: 'City',
+        data: [],
+      },
+    ],
   });
   const [isShowDeleteDialog, setIsShowDeleteDialog] = useState(false);
-  const [currentCityDelete, setCurrentCityDelete] = useState({
+  const [currentDistrictDelete, setCurrentDistrictDelete] = useState({
     id: -1,
     name: '',
   });
-  const cityLoadingStatus = useAppSelector(cityLoading);
+  const districtLoadingStatus = useAppSelector(districtLoading);
   const tableListElement = useRef<TableListRefObject>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   async function goToAdd() {
-    await router.push('/admin/city/add');
+    await router.push('/admin/district/add');
   }
 
   async function goToEdit(id: number) {
-    await router.push(`/admin/city/${id}`);
+    await router.push(`/admin/district/${id}`);
   }
 
   async function getData(query = '') {
-    const res = await dispatch(getCityListFilter({ query })).unwrap();
+    const res = await dispatch(getDistrictListFilter({ query })).unwrap();
     if (res.isSuccess) {
       return res.data;
     } else {
@@ -72,16 +83,17 @@ const CityList: NextPage = () => {
     }
   }
 
-  function confirmDeleteCity(id: number, name: string) {
-    setCurrentCityDelete({
+  function confirmDeleteDistrict(id: number, name: string) {
+    setCurrentDistrictDelete({
       id,
       name,
     });
     setIsShowDeleteDialog(true);
   }
-  function deleteCity() {
+
+  function deleteDistrict() {
     const res = dispatch(
-      deleteCityThunk({ id: currentCityDelete.id }),
+      deleteDistrictThunk({ id: currentDistrictDelete.id }),
     ).unwrap();
     res.then((successData) => {
       if (successData.isSuccess) {
@@ -93,18 +105,30 @@ const CityList: NextPage = () => {
         if (tableListElement.current) {
           tableListElement.current.handleSearch();
         }
-        refusedDeleteCity();
+        refusedDeleteDistrict();
       }
     });
   }
 
-  function refusedDeleteCity() {
+  function refusedDeleteDistrict() {
     setIsShowDeleteDialog(false);
-    setCurrentCityDelete({
+    setCurrentDistrictDelete({
       id: -1,
       name: '',
     });
   }
+
+  useEffect(() => {
+    const getCity = dispatch(getCityListFilter({ query: '' })).unwrap();
+    getCity.then((listCityData) => {
+      setTableConfig((old) => {
+        const indexCity = old.filters.findIndex((x) => x.key === 'city');
+        const newValue = old;
+        newValue.filters[indexCity].data = listCityData.data.list;
+        return newValue;
+      });
+    });
+  }, []);
 
   function rowList(data: Array<KeyValue>) {
     const tdClasses = 'p-4 border-b border-blue-gray-50';
@@ -114,6 +138,7 @@ const CityList: NextPage = () => {
           <tr key={index}>
             <td className={tdClasses}>{row.name}</td>
             <td className={tdClasses}>{row.slug}</td>
+            <td className={tdClasses}>{row.cityName}</td>
             <td className={tdClasses}>
               <IconButton
                 onClick={() => goToEdit(row.id)}
@@ -123,7 +148,7 @@ const CityList: NextPage = () => {
                 <i className="fa-solid fa-pencil" />
               </IconButton>
               <IconButton
-                onClick={() => confirmDeleteCity(row.id, row.name)}
+                onClick={() => confirmDeleteDistrict(row.id, row.name)}
                 color="red"
               >
                 <i className="fa-solid fa-trash"></i>
@@ -138,7 +163,7 @@ const CityList: NextPage = () => {
   return (
     <>
       <Head>
-        <title>City management</title>
+        <title>District management</title>
       </Head>
       <div>
         <Card className="py-10 lg:w-[calc(96%)] mx-auto my-5">
@@ -146,10 +171,10 @@ const CityList: NextPage = () => {
             <div className="mb-8 flex items-center justify-between gap-8">
               <div>
                 <Typography variant="h5" color="blue-gray">
-                  City list
+                  District list
                 </Typography>
                 <Typography color="gray" className="mt-1 font-normal">
-                  See information about all city
+                  See information about all district
                 </Typography>
               </div>
               <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
@@ -159,7 +184,8 @@ const CityList: NextPage = () => {
                   onClick={goToAdd}
                   size="sm"
                 >
-                  <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add city
+                  <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add
+                  district
                 </Button>
               </div>
             </div>
@@ -169,20 +195,20 @@ const CityList: NextPage = () => {
             tableConfig={tableConfig}
             rowList={rowList}
             getData={getData}
-            loadingStatus={cityLoadingStatus}
+            loadingStatus={districtLoadingStatus}
           />
         </Card>
       </div>
 
       <DialogConfirm
         isShow={isShowDeleteDialog}
-        title={() => 'Delete city'}
-        body={() => 'Do you want to delete this City?'}
-        refusedCallback={refusedDeleteCity}
-        acceptedCallback={deleteCity}
+        title={() => 'Delete district'}
+        body={() => 'Do you want to delete this District?'}
+        refusedCallback={refusedDeleteDistrict}
+        acceptedCallback={deleteDistrict}
       ></DialogConfirm>
     </>
   );
 };
 
-export default CityList;
+export default DistrictList;

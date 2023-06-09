@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import {
@@ -8,6 +8,8 @@ import {
   CardBody,
   CardHeader,
   Input,
+  Select,
+  Option,
   Spinner,
   Typography,
 } from '@material-tailwind/react';
@@ -17,26 +19,38 @@ import {
   PlusCircleIcon,
 } from '@heroicons/react/24/solid';
 import {
-  cityLoading,
-  createNewCity,
-  getCityInfo,
-  editCityInfo,
-} from '../../../features/city/citySlice';
+  districtLoading,
+  createNewDistrict,
+  getDistrictInfo,
+  editDistrictInfo,
+} from '../../../features/district/districtSlice';
 import { KeyValue } from '../../../common/config/interfaces';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
+import { getCityListFilter } from '../../../features/city/citySlice';
 
-const DetailCity: NextPage = () => {
+interface CityItem {
+  id: number;
+  name: string;
+}
+
+const DetailDistrict: NextPage = () => {
   const [inputsInitialState, setInputsInitialState] = useState({
     name: '',
     slug: '',
+    city: {
+      id: '',
+      name: '',
+    },
   });
+  const initialCityList: Array<CityItem> = [];
   const [inputs, setInputs] = useState(inputsInitialState);
-  const [inputsError, setInputErrors] = useState({ name: '' });
+  const [inputsError, setInputErrors] = useState({ name: '', city: '' });
   const [isEdit, setIsEdit] = useState(false);
+  const [cityList, setCityList] = useState(initialCityList);
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const loadingStatus = useAppSelector(cityLoading);
+  const loadingStatus = useAppSelector(districtLoading);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const name = e.target.name;
@@ -49,17 +63,23 @@ const DetailCity: NextPage = () => {
   function handleSubmit() {
     if (validate()) {
       try {
+        const sendData = {
+          ...inputs,
+          city: {
+            id: parseInt(inputs.city.id),
+          },
+        };
         const res = dispatch(
-          isEdit ? editCityInfo(inputs) : createNewCity(inputs),
+          isEdit ? editDistrictInfo(sendData) : createNewDistrict(sendData),
         ).unwrap();
         res.then(async (data: KeyValue) => {
           if (data.isSuccess) {
-            toast(`City ${isEdit ? 'edited' : 'added'} successfully`, {
+            toast(`District ${isEdit ? 'edited' : 'added'} successfully`, {
               hideProgressBar: true,
               autoClose: 2000,
               type: 'success',
             });
-            await router.push('/admin/city');
+            await router.push('/admin/district');
           }
         });
       } catch (e) {}
@@ -72,10 +92,19 @@ const DetailCity: NextPage = () => {
       isValid = false;
       setInputErrors((values) => ({
         ...values,
-        name: 'City name can not be empty',
+        name: 'District name can not be empty',
       }));
     } else {
       setInputErrors((values) => ({ ...values, name: '' }));
+    }
+    if (!inputs.city) {
+      isValid = false;
+      setInputErrors((values) => ({
+        ...values,
+        city: 'Please select city',
+      }));
+    } else {
+      setInputErrors((values) => ({ ...values, city: '' }));
     }
     return isValid;
   }
@@ -85,30 +114,51 @@ const DetailCity: NextPage = () => {
   }
 
   useEffect(() => {
-    const cityId = router.query.id;
-    if (cityId && cityId !== 'add') {
-      const cityIdNum = parseInt(cityId as string);
-      if (!isNaN(cityIdNum)) {
+    const districtId = router.query.id;
+    if (districtId && districtId !== 'add') {
+      const districtIdNum = parseInt(districtId as string);
+      if (!isNaN(districtIdNum)) {
         setIsEdit(true);
-        const response = dispatch(getCityInfo({ id: cityIdNum })).unwrap();
+        const response = dispatch(
+          getDistrictInfo({ id: districtIdNum }),
+        ).unwrap();
         response.then((resData) => {
           if (resData.isSuccess) {
-            setInputs(resData.data.city);
-            setInputsInitialState(resData.data.city);
+            setInputs(resData.data.district);
+            setInputsInitialState(resData.data.district);
           }
         });
       }
     }
+    const getCity = dispatch(getCityListFilter({ query: '' })).unwrap();
+    getCity.then((listCityData) => {
+      setCityList(listCityData.data.list);
+    });
   }, [router.query]);
 
   async function goToList() {
-    await router.push(`/admin/city`);
+    await router.push(`/admin/district`);
   }
+
+  const handleChangeCity = (val: string | undefined) => {
+    if (typeof val === 'string') {
+      const city = cityList.find((x: { id: number }) => x.id === parseInt(val));
+      return setInputs((old) => {
+        return {
+          ...old,
+          city: {
+            id: val,
+            name: city ? city.name : '',
+          },
+        };
+      });
+    }
+  };
 
   return (
     <>
       <Head>
-        <title>City management</title>
+        <title>District management</title>
       </Head>
       {loadingStatus === 'loading' && (
         <Spinner className="h-12 w-12 absolute top-[calc(50%-30px)] left-[50%] z-20" />
@@ -119,10 +169,12 @@ const DetailCity: NextPage = () => {
             <div className="mb-8 flex items-center justify-between gap-8">
               <div>
                 <Typography variant="h5" color="blue-gray">
-                  {isEdit ? `Edit City` : `Add City`}
+                  {isEdit ? `Edit District` : `Add District`}
                 </Typography>
                 <Typography color="gray" className="mt-1 font-normal">
-                  {isEdit ? `Edit a city information` : `Add a new City`}
+                  {isEdit
+                    ? `Edit a district information`
+                    : `Add a new District`}
                 </Typography>
               </div>
               <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
@@ -167,7 +219,7 @@ const DetailCity: NextPage = () => {
                   value={inputs.name}
                   onChange={handleChange}
                   error={inputsError.name !== ''}
-                  label="City name"
+                  label="District name"
                 />
                 <p className={'text-xs mt-1 text-red-300'}>
                   {inputsError.name}
@@ -183,6 +235,28 @@ const DetailCity: NextPage = () => {
                 />
               </div>
             </div>
+            <div className={'flex-row flex gap-8 mt-8'}>
+              <div className={'basis-1/2'}>
+                <Select
+                  value={inputs.city.id}
+                  onChange={(e) => handleChangeCity(e)}
+                  name="city"
+                  selected={(e) => inputs.city.name}
+                  variant="static"
+                  error={inputsError.city !== ''}
+                  label="Select City"
+                >
+                  {cityList.map((city: { id: number; name: string }) => (
+                    <Option key={city.id} value={city.id.toString()}>
+                      {city.name}
+                    </Option>
+                  ))}
+                </Select>
+                <p className={'text-xs mt-1 text-red-300'}>
+                  {inputsError.city}
+                </p>
+              </div>
+            </div>
           </CardBody>
         </Card>
       )}
@@ -190,4 +264,4 @@ const DetailCity: NextPage = () => {
   );
 };
 
-export default DetailCity;
+export default DetailDistrict;

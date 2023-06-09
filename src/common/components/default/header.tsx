@@ -34,34 +34,28 @@ import {
   PresentationChartBarIcon,
   ShoppingBagIcon,
 } from '@heroicons/react/24/solid';
+import { useRouter } from 'next/router';
 
 // profile menu component
 const profileMenuItems = [
   {
     label: 'My Profile',
     icon: UserCircleIcon,
-  },
-  {
-    label: 'Edit Profile',
-    icon: Cog6ToothIcon,
-  },
-  {
-    label: 'Inbox',
-    icon: InboxArrowDownIcon,
-  },
-  {
-    label: 'Help',
-    icon: LifebuoyIcon,
+    url: '/admin/profile',
   },
   {
     label: 'Sign Out',
     icon: PowerIcon,
+    url: 'logout',
   },
 ];
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const closeMenu = () => setIsMenuOpen(false);
+  const router = useRouter();
+  const goToLink = (url: string) => {
+    router.push(url);
+  };
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -87,12 +81,12 @@ function ProfileMenu() {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon }, key) => {
+        {profileMenuItems.map(({ label, icon, url }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
             <MenuItem
               key={label}
-              onClick={closeMenu}
+              onClick={() => goToLink(url)}
               className={`flex items-center gap-2 rounded ${
                 isLastItem
                   ? 'hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10'

@@ -59,9 +59,8 @@ export default function Layout({ children }: PropsWithChildren) {
           <div
             className={
               (isShowHeader
-                ? 'lg:w-[calc(100vw-20rem)]'
-                : 'lg:w-[calc(100vw)]') +
-              ' mt-20 relative min-h-[calc(100vh-74px)]'
+                ? 'lg:w-[calc(100vw-20rem)] mt-20'
+                : 'lg:w-[calc(100vw)]') + ' relative min-h-[calc(100vh-74px)]'
             }
           >
             {children}
