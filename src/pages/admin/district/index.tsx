@@ -2,13 +2,6 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 import TableList from '../../../common/components/default/tableList';
-import {
-  Button,
-  Card,
-  CardHeader,
-  IconButton,
-  Typography,
-} from '@material-tailwind/react';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import {
   KeyValue,
@@ -24,6 +17,9 @@ import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import DialogConfirm from '../../../common/components/default/dialogConfirm';
 import { toast } from 'react-toastify';
 import { getCityListFilter } from '../../../features/city/citySlice';
+import { Button } from 'primereact/button';
+import { Card } from 'primereact/card';
+import BasicListHeader from '../../../common/components/default/masterData/basicListHeader';
 
 const DistrictList: NextPage = () => {
   const [tableConfig, setTableConfig] = useState({
@@ -66,10 +62,6 @@ const DistrictList: NextPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  async function goToAdd() {
-    await router.push('/admin/district/add');
-  }
-
   async function goToEdit(id: number) {
     await router.push(`/admin/district/${id}`);
   }
@@ -111,6 +103,7 @@ const DistrictList: NextPage = () => {
   }
 
   function refusedDeleteDistrict() {
+    console.log('fasdf');
     setIsShowDeleteDialog(false);
     setCurrentDistrictDelete({
       id: -1,
@@ -140,19 +133,23 @@ const DistrictList: NextPage = () => {
             <td className={tdClasses}>{row.slug}</td>
             <td className={tdClasses}>{row.cityName}</td>
             <td className={tdClasses}>
-              <IconButton
+              <Button
+                icon="pi pi-pencil"
                 onClick={() => goToEdit(row.id)}
-                color="green"
-                className={'mr-4'}
-              >
-                <i className="fa-solid fa-pencil" />
-              </IconButton>
-              <IconButton
+                rounded
+                aria-label="Filter"
+                size="small"
+                severity="success"
+              />
+              <Button
+                icon="pi pi-trash"
                 onClick={() => confirmDeleteDistrict(row.id, row.name)}
-                color="red"
-              >
-                <i className="fa-solid fa-trash"></i>
-              </IconButton>
+                rounded
+                aria-label="Filter"
+                size="small"
+                severity="danger"
+                className={'!ml-4'}
+              />
             </td>
           </tr>
         ))}
@@ -166,30 +163,17 @@ const DistrictList: NextPage = () => {
         <title>District management</title>
       </Head>
       <div>
-        <Card className="py-10 lg:w-[calc(96%)] mx-auto my-5">
-          <CardHeader floated={false} shadow={false} className="rounded-none">
-            <div className="mb-8 flex items-center justify-between gap-8">
-              <div>
-                <Typography variant="h5" color="blue-gray">
-                  District list
-                </Typography>
-                <Typography color="gray" className="mt-1 font-normal">
-                  See information about all district
-                </Typography>
-              </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                <Button
-                  className="flex items-center gap-3"
-                  color="blue"
-                  onClick={goToAdd}
-                  size="sm"
-                >
-                  <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add
-                  district
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
+        <Card
+          header={BasicListHeader({
+            title: 'District list',
+            smallTitle: 'See information about all district',
+            addButton: {
+              label: 'Add district',
+              url: '/admin/district/add',
+            },
+          })}
+          className="mx-auto my-5 table-list"
+        >
           <TableList
             ref={tableListElement}
             tableConfig={tableConfig}
@@ -202,8 +186,8 @@ const DistrictList: NextPage = () => {
 
       <DialogConfirm
         isShow={isShowDeleteDialog}
-        title={() => 'Delete district'}
-        body={() => 'Do you want to delete this District?'}
+        title={'Delete district'}
+        body={'Do you want to delete this District?'}
         refusedCallback={refusedDeleteDistrict}
         acceptedCallback={deleteDistrict}
       ></DialogConfirm>

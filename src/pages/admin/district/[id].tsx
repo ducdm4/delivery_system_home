@@ -3,17 +3,6 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Input,
-  Select,
-  Option,
-  Spinner,
-  Typography,
-} from '@material-tailwind/react';
-import {
   ArrowLeftIcon,
   BackspaceIcon,
   PlusCircleIcon,
@@ -28,6 +17,11 @@ import { KeyValue } from '../../../common/config/interfaces';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
 import { getCityListFilter } from '../../../features/city/citySlice';
+import { Button } from 'primereact/button';
+import { Card } from 'primereact/card';
+import { InputText } from 'primereact/inputtext';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dropdown } from 'primereact/dropdown';
 
 interface CityItem {
   id: number;
@@ -38,10 +32,7 @@ const DetailDistrict: NextPage = () => {
   const [inputsInitialState, setInputsInitialState] = useState({
     name: '',
     slug: '',
-    city: {
-      id: '',
-      name: '',
-    },
+    city: {},
   });
   const initialCityList: Array<CityItem> = [];
   const [inputs, setInputs] = useState(inputsInitialState);
@@ -63,14 +54,8 @@ const DetailDistrict: NextPage = () => {
   function handleSubmit() {
     if (validate()) {
       try {
-        const sendData = {
-          ...inputs,
-          city: {
-            id: parseInt(inputs.city.id),
-          },
-        };
         const res = dispatch(
-          isEdit ? editDistrictInfo(sendData) : createNewDistrict(sendData),
+          isEdit ? editDistrictInfo(inputs) : createNewDistrict(inputs),
         ).unwrap();
         res.then(async (data: KeyValue) => {
           if (data.isSuccess) {
@@ -97,7 +82,7 @@ const DetailDistrict: NextPage = () => {
     } else {
       setInputErrors((values) => ({ ...values, name: '' }));
     }
-    if (!inputs.city) {
+    if (Object.keys(inputs.city).length === 0) {
       isValid = false;
       setInputErrors((values) => ({
         ...values,
@@ -140,19 +125,63 @@ const DetailDistrict: NextPage = () => {
     await router.push(`/admin/district`);
   }
 
-  const handleChangeCity = (val: string | undefined) => {
-    if (typeof val === 'string') {
-      const city = cityList.find((x: { id: number }) => x.id === parseInt(val));
-      return setInputs((old) => {
-        return {
-          ...old,
-          city: {
-            id: val,
-            name: city ? city.name : '',
-          },
-        };
-      });
-    }
+  const handleChangeCity = (val: { id: number; name: string }) => {
+    return setInputs((old) => {
+      return {
+        ...old,
+        city: val,
+      };
+    });
+  };
+
+  const header = () => {
+    return (
+      <div className="rounded-none p-4">
+        <div className="mb-8 flex items-center justify-between gap-8">
+          <div>
+            <p className={'text-xl font-bold'}>
+              {isEdit ? `Edit District` : `Add District`}
+            </p>
+            <p className={'text-sm'}>
+              {isEdit ? `Edit a district information` : `Add a new District`}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Button
+              className="flex items-center gap-3"
+              severity="success"
+              size="small"
+              onClick={handleSubmit}
+            >
+              <PlusCircleIcon strokeWidth={2} className="h-4 w-4" />
+              Submit
+            </Button>
+            <Button
+              className="flex items-center gap-3"
+              color="yellow"
+              onClick={resetInput}
+              severity="warning"
+              outlined
+              size="small"
+            >
+              <BackspaceIcon strokeWidth={2} className="h-4 w-4" />
+              Reset
+            </Button>
+          </div>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Button
+              className="flex items-center gap-3"
+              color="blue"
+              size="small"
+              severity="info"
+              onClick={goToList}
+            >
+              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Back to list
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -161,103 +190,68 @@ const DetailDistrict: NextPage = () => {
         <title>District management</title>
       </Head>
       {loadingStatus === 'loading' && (
-        <Spinner className="h-12 w-12 absolute top-[calc(50%-30px)] left-[50%] z-20" />
+        <ProgressSpinner className="h-12 w-12 absolute top-[100px] left-[calc(50%-50px)] z-20" />
       )}
       {loadingStatus === 'idle' && (
-        <Card className="py-10 lg:w-[calc(96%)] mx-auto my-5">
-          <CardHeader floated={false} shadow={false} className="rounded-none">
-            <div className="mb-8 flex items-center justify-between gap-8">
-              <div>
-                <Typography variant="h5" color="blue-gray">
-                  {isEdit ? `Edit District` : `Add District`}
-                </Typography>
-                <Typography color="gray" className="mt-1 font-normal">
-                  {isEdit
-                    ? `Edit a district information`
-                    : `Add a new District`}
-                </Typography>
-              </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                <Button
-                  className="flex items-center gap-3"
-                  color="green"
-                  size="sm"
-                  onClick={handleSubmit}
-                >
-                  <PlusCircleIcon strokeWidth={2} className="h-4 w-4" />
-                  Submit
-                </Button>
-                <Button
-                  className="flex items-center gap-3"
-                  color="yellow"
-                  onClick={resetInput}
-                  size="sm"
-                >
-                  <BackspaceIcon strokeWidth={2} className="h-4 w-4" />
-                  Reset
-                </Button>
-              </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                <Button
-                  className="flex items-center gap-3"
-                  color="blue"
-                  size="sm"
-                  onClick={goToList}
-                >
-                  <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Back to
-                  list
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardBody>
+        <Card header={header} className="mx-auto my-5">
+          <div>
             <div className={'flex-row flex gap-8'}>
               <div className={'basis-1/2'}>
-                <Input
-                  variant="static"
-                  name="name"
-                  value={inputs.name}
-                  onChange={handleChange}
-                  error={inputsError.name !== ''}
-                  label="District name"
-                />
+                <span className="p-float-label">
+                  <InputText
+                    id="districtname"
+                    name="name"
+                    value={inputs.name}
+                    onChange={handleChange}
+                    className={
+                      (inputsError.name !== '' ? 'p-invalid' : '') +
+                      ' w-full p-inputtext-sm'
+                    }
+                  />
+                  <label htmlFor="districtname">District name</label>
+                </span>
                 <p className={'text-xs mt-1 text-red-300'}>
                   {inputsError.name}
                 </p>
               </div>
               <div className={'basis-1/2'}>
-                <Input
-                  variant="static"
-                  name="slug"
-                  value={inputs.slug}
-                  onChange={handleChange}
-                  label="Search name"
-                />
+                <span className="p-float-label">
+                  <InputText
+                    id="slug"
+                    name="slug"
+                    value={inputs.slug}
+                    onChange={handleChange}
+                    className={'w-full p-inputtext-sm'}
+                  />
+                  <label htmlFor="slug">Search name</label>
+                </span>
               </div>
             </div>
             <div className={'flex-row flex gap-8 mt-8'}>
               <div className={'basis-1/2'}>
-                <Select
-                  value={inputs.city.id}
-                  onChange={(e) => handleChangeCity(e)}
-                  name="city"
-                  selected={(e) => inputs.city.name}
-                  variant="static"
-                  error={inputsError.city !== ''}
-                  label="Select City"
-                >
-                  {cityList.map((city: { id: number; name: string }) => (
-                    <Option key={city.id} value={city.id.toString()}>
-                      {city.name}
-                    </Option>
-                  ))}
-                </Select>
+                <span className="p-float-label">
+                  <Dropdown
+                    value={inputs.city}
+                    onChange={(e) => handleChangeCity(e.value)}
+                    options={cityList}
+                    optionLabel="name"
+                    placeholder="Select a City"
+                    className={
+                      (inputsError.city !== '' ? 'p-invalid' : '') +
+                      ' w-full p-inputtext-sm'
+                    }
+                    name="city"
+                    id="city"
+                  />
+                  <label htmlFor="city">Select a City</label>
+                </span>
                 <p className={'text-xs mt-1 text-red-300'}>
                   {inputsError.city}
                 </p>
               </div>
+              <div className={'basis-1/2'}> </div>
             </div>
-          </CardBody>
+          </div>
         </Card>
       )}
     </>

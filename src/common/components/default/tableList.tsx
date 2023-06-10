@@ -1,19 +1,3 @@
-import {
-  Button,
-  CardHeader,
-  Typography,
-  Input,
-  CardBody,
-  CardFooter,
-  Spinner,
-  Select,
-  Option,
-} from '@material-tailwind/react';
-import {
-  ChevronUpDownIcon,
-  ChevronUpIcon,
-  MagnifyingGlassIcon,
-} from '@heroicons/react/24/solid';
 import { KeyValue, TableListRefObject } from '../../config/interfaces';
 import React, {
   forwardRef,
@@ -22,8 +6,11 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { PER_PAGE_ITEM } from '../../config/constant';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 interface Props {
   tableConfig: {
@@ -42,7 +29,10 @@ interface sortItem {
 }
 interface filterItem {
   key: string;
-  value: string;
+  value: {
+    id: number;
+    name: string;
+  };
 }
 
 const TableList = forwardRef(
@@ -56,7 +46,18 @@ const TableList = forwardRef(
       return defaultData;
     });
     const [filterData, setFilterData] = useState(() => {
-      const defaultData: Array<filterItem> = [];
+      let defaultData: Array<filterItem> = [];
+      if (tableConfig.filters.length) {
+        defaultData = tableConfig.filters.map((filterItem) => {
+          return {
+            key: filterItem.key,
+            value: {
+              id: 0,
+              name: '',
+            },
+          };
+        });
+      }
       return defaultData;
     });
     const [keyword, setKeyword] = useState('');
@@ -79,16 +80,6 @@ const TableList = forwardRef(
         }
       });
       setSortData(sorts);
-      if (tableConfig.filters.length) {
-        setFilterData((old) => {
-          return tableConfig.filters.map((filterItem) => {
-            return {
-              key: filterItem.key,
-              value: '',
-            };
-          });
-        });
-      }
     }, []);
 
     useEffect(() => {
@@ -150,6 +141,11 @@ const TableList = forwardRef(
           }`;
         }
       });
+      filterData.forEach((filterItem) => {
+        if (filterItem.value && filterItem.value.id !== 0) {
+          query += `&filter[${filterItem.key}]=${filterItem.value.id}`;
+        }
+      });
       const res = await getData(query);
       setTableData(res.list);
       setPagingInfo((oldState) => {
@@ -179,29 +175,40 @@ const TableList = forwardRef(
       setTriggerGetData((old) => old + 1);
     }
 
+    function handleChangeFilter(
+      value: { id: number; name: string },
+      index: number,
+    ) {
+      setFilterData((old) => {
+        const res = old;
+        res[index].value = value;
+        return JSON.parse(JSON.stringify(res));
+      });
+    }
+
     return (
       <>
-        <CardHeader
-          floated={false}
-          shadow={false}
-          className="rounded-none overflow-visible"
-        >
+        <div className="rounded-none px-4">
           <div className="flex flex-col items-center gap-4 md:flex-row">
-            <div className="w-full md:w-80">
-              <Input
-                label="Search"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
+            <div className="">
+              <span className="p-input-icon-left w-80">
+                <i className="pi pi-search" />
+                <InputText
+                  className="w-80"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  placeholder="Search"
+                />
+              </span>
             </div>
             <Button
+              severity="success"
+              size="small"
               disabled={loadingStatus === 'loading'}
               onClick={handleSubmitSearch}
-              variant="outlined"
             >
               {loadingStatus === 'loading' ? (
-                <Spinner color="blue" />
+                <ProgressSpinner strokeWidth="8" animationDuration="2s" />
               ) : (
                 'Submit'
               )}
@@ -209,30 +216,37 @@ const TableList = forwardRef(
             <Button
               disabled={loadingStatus === 'loading'}
               onClick={handleReset}
-              variant="filled"
+              size="small"
+              severity="secondary"
             >
-              {loadingStatus === 'loading' ? <Spinner color="blue" /> : 'Reset'}
+              {loadingStatus === 'loading' ? (
+                <ProgressSpinner strokeWidth="8" animationDuration="2s" />
+              ) : (
+                'Reset'
+              )}
             </Button>
           </div>
           <div className={'flex-row flex gap-8 mt-5'}>
             {tableConfig.filters.map((filterItem, index) => (
-              <div className={'basis-1/4'}>
-                <Select
+              <div key={`${filterItem.key}-div`} className={'basis-1/4'}>
+                <Dropdown
                   value={filterData[index].value}
-                  label={filterItem.label}
-                >
-                  <Option value={''}>Please select</Option>
-                  {filterItem.data.map((data) => (
-                    <Option key={data.id}>{data.name}</Option>
-                  ))}
-                </Select>
+                  onChange={(e) => handleChangeFilter(e.value, index)}
+                  options={filterItem.data}
+                  optionLabel="name"
+                  className={'w-full p-inputtext-sm'}
+                  placeholder={filterItem.label}
+                  name={filterItem.key}
+                  key={`${filterItem.key}-sel`}
+                  showClear
+                />
               </div>
             ))}
           </div>
-        </CardHeader>
-        <CardBody className="overflow-scroll p-0 relative min-h-0">
+        </div>
+        <div className="overflow-scroll p-0 relative min-h-0">
           {loadingStatus === 'loading' && (
-            <Spinner color="blue" className={'mx-auto h-12 w-12 my-10'} />
+            <ProgressSpinner strokeWidth="8" animationDuration="2s" />
           )}
           {loadingStatus !== 'loading' && (
             <table className="mt-4 w-full min-w-max table-auto text-left">
@@ -249,34 +263,24 @@ const TableList = forwardRef(
                       style={!headerItem.label ? { width: '15%' } : {}}
                       className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
                     >
-                      <Typography
-                        variant="small"
+                      <p
                         color="blue-gray"
-                        className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
+                        className="flex text-sm items-center justify-between gap-2 font-normal leading-none opacity-70"
                       >
                         {headerItem.label}{' '}
                         {headerItem.isSort &&
                           checkUpDownIcon(headerItem.key) === 0 && (
-                            <ChevronUpDownIcon
-                              strokeWidth={2}
-                              className="h-6 w-6"
-                            />
+                            <i className="pi pi-sort-alt"></i>
                           )}
                         {headerItem.isSort &&
                           checkUpDownIcon(headerItem.key) === 1 && (
-                            <ChevronUpIcon
-                              strokeWidth={2}
-                              className="h-4 w-6"
-                            />
+                            <i className="pi pi-sort-alpha-down"></i>
                           )}
                         {headerItem.isSort &&
                           checkUpDownIcon(headerItem.key) === -1 && (
-                            <ChevronDownIcon
-                              strokeWidth={2}
-                              className="h-4 w-6"
-                            />
+                            <i className="pi pi-sort-alpha-up"></i>
                           )}
-                      </Typography>
+                      </p>
                     </th>
                   ))}
                 </tr>
@@ -296,42 +300,40 @@ const TableList = forwardRef(
               </tbody>
             </table>
           )}
-        </CardBody>
+        </div>
         {tableData.length > 0 && (
-          <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
+          <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+            <p className="text-sm">
               Page {pagingInfo.currentPage} of {pagingInfo.totalPage}
-            </Typography>
+            </p>
             <div className="flex gap-2">
               <Button
-                variant="outlined"
                 disabled={
                   pagingInfo.currentPage === 1 || loadingStatus === 'loading'
                 }
-                color="blue-gray"
-                size="sm"
+                text
+                raised
+                severity="info"
+                size="small"
                 onClick={() => handleChangePage('desc')}
               >
                 Previous
               </Button>
               <Button
-                variant="outlined"
                 disabled={
                   pagingInfo.currentPage === pagingInfo.totalPage ||
                   loadingStatus === 'loading'
                 }
-                color="blue-gray"
-                size="sm"
+                text
+                raised
+                severity="info"
+                size="small"
                 onClick={() => handleChangePage('asc')}
               >
                 Next
               </Button>
             </div>
-          </CardFooter>
+          </div>
         )}
       </>
     );

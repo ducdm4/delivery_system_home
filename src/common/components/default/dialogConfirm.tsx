@@ -1,19 +1,13 @@
 import { NextPage } from 'next';
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-} from '@material-tailwind/react';
 import { useEffect, useState } from 'react';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 interface Props {
   isShow: boolean;
-  title: Function;
-  body: Function;
-  refusedCallback: Function;
-  acceptedCallback: Function;
+  title: string;
+  body: string;
+  refusedCallback: () => void;
+  acceptedCallback: () => void;
 }
 
 const DialogConfirm: NextPage<Props> = ({
@@ -23,39 +17,25 @@ const DialogConfirm: NextPage<Props> = ({
   refusedCallback,
   acceptedCallback,
 }) => {
-  const [open, setOpen] = useState(isShow);
-
-  const handleOpen = () => {
-    refusedCallback();
-  };
-
   useEffect(() => {
-    setOpen(isShow);
+    console.log('isShow', isShow);
+    if (isShow) {
+      confirmDialog({
+        message: body,
+        header: title,
+        icon: 'pi pi-exclamation-triangle',
+        accept: acceptedCallback,
+        reject: refusedCallback,
+        onHide: (e) => onHid(e),
+      });
+    }
   }, [isShow]);
 
-  return (
-    <Dialog open={open} handler={handleOpen}>
-      <DialogHeader>{title()}</DialogHeader>
-      <DialogBody divider>{body()}</DialogBody>
-      <DialogFooter>
-        <Button
-          variant="text"
-          color="red"
-          onClick={handleOpen}
-          className="mr-1"
-        >
-          <span>Cancel</span>
-        </Button>
-        <Button
-          variant="gradient"
-          color="green"
-          onClick={() => acceptedCallback()}
-        >
-          <span>Confirm</span>
-        </Button>
-      </DialogFooter>
-    </Dialog>
-  );
+  function onHid(res: string) {
+    refusedCallback();
+  }
+
+  return <ConfirmDialog />;
 };
 
 export default DialogConfirm;

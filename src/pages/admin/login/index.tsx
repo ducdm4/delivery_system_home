@@ -4,8 +4,9 @@ import { useAppDispatch } from '../../../common/hooks';
 import { userLogin } from '../../../features/auth/authSlice';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { Button, Input } from '@material-tailwind/react';
 import { ValidateEmail } from '../../../common/functions';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
 
 const LoginPage: NextPage = () => {
   const dispatch = useAppDispatch();
@@ -85,7 +86,7 @@ const LoginPage: NextPage = () => {
       </Head>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h1 className="text-center text-3xl font-bold text-bubble-gum-600">
+          <h1 className="text-center text-3xl font-bold text-green-400">
             DELIVERY SYSTEM
           </h1>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -95,40 +96,51 @@ const LoginPage: NextPage = () => {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <div className="mt-2">
-                <Input
-                  type="text"
+            <div className="mt-2">
+              <span className="p-float-label">
+                <InputText
+                  id="email"
                   name="email"
-                  label="Email"
-                  error={errors.email !== ''}
                   value={inputs.email || ''}
+                  className={
+                    (errors.email !== '' ? 'p-invalid' : '') +
+                    ' p-inputtext-sm w-[100%]'
+                  }
                   onChange={handleChange}
                 />
-                <p className={'text-red-300 mt-0.5 ml-1 text-sm'}>
-                  {errors.email}
-                </p>
-              </div>
+                <label htmlFor="username">Email</label>
+              </span>
+              <p className={'text-red-300 mt-0.5 ml-1 text-xs'}>
+                {errors.email}
+              </p>
             </div>
 
-            <div>
-              <div className="mt-2">
-                <Input
+            <div className="mt-5">
+              <span className="p-float-label mt-10">
+                <InputText
+                  id="password"
                   type="password"
                   name="password"
-                  label="Password"
-                  error={errors.password !== ''}
                   value={inputs.password || ''}
+                  className={
+                    (errors.password !== '' ? 'p-invalid' : '') +
+                    ' p-inputtext-sm w-[100%]'
+                  }
                   onChange={handleChange}
                 />
-                <p className={'text-red-300 mt-0.5 ml-1 text-sm'}>
-                  {errors.password}
-                </p>
-              </div>
+                <label htmlFor="username">Password</label>
+              </span>
+              <p className={'text-red-300 mt-0.5 ml-1 text-xs'}>
+                {errors.password}
+              </p>
             </div>
 
             <div>
-              <Button className={'w-full'} type="submit" color="green">
+              <Button
+                className={'w-full !block'}
+                type="submit"
+                severity="success"
+              >
                 Sign in
               </Button>
             </div>

@@ -2,14 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 import TableList from '../../../common/components/default/tableList';
-import {
-  Button,
-  Card,
-  CardHeader,
-  IconButton,
-  Typography,
-} from '@material-tailwind/react';
-import { UserPlusIcon } from '@heroicons/react/24/solid';
+import { Card } from 'primereact/card';
 import {
   KeyValue,
   TableListRefObject,
@@ -23,6 +16,8 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import DialogConfirm from '../../../common/components/default/dialogConfirm';
 import { toast } from 'react-toastify';
+import { Button } from 'primereact/button';
+import BasicListHeader from '../../../common/components/default/masterData/basicListHeader';
 
 const CityList: NextPage = () => {
   const [tableConfig, setTableConfig] = useState({
@@ -54,10 +49,6 @@ const CityList: NextPage = () => {
   const tableListElement = useRef<TableListRefObject>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
-
-  async function goToAdd() {
-    await router.push('/admin/city/add');
-  }
 
   async function goToEdit(id: number) {
     await router.push(`/admin/city/${id}`);
@@ -107,7 +98,7 @@ const CityList: NextPage = () => {
   }
 
   function rowList(data: Array<KeyValue>) {
-    const tdClasses = 'p-4 border-b border-blue-gray-50';
+    const tdClasses = 'p-2 border-b border-blue-gray-50';
     return (
       <>
         {data.map((row, index: number) => (
@@ -115,19 +106,23 @@ const CityList: NextPage = () => {
             <td className={tdClasses}>{row.name}</td>
             <td className={tdClasses}>{row.slug}</td>
             <td className={tdClasses}>
-              <IconButton
+              <Button
+                icon="pi pi-pencil"
                 onClick={() => goToEdit(row.id)}
-                color="green"
-                className={'mr-4'}
-              >
-                <i className="fa-solid fa-pencil" />
-              </IconButton>
-              <IconButton
+                rounded
+                aria-label="Filter"
+                size="small"
+                severity="success"
+              />
+              <Button
+                icon="pi pi-trash"
                 onClick={() => confirmDeleteCity(row.id, row.name)}
-                color="red"
-              >
-                <i className="fa-solid fa-trash"></i>
-              </IconButton>
+                rounded
+                aria-label="Filter"
+                size="small"
+                severity="danger"
+                className={'!ml-4'}
+              />
             </td>
           </tr>
         ))}
@@ -141,29 +136,17 @@ const CityList: NextPage = () => {
         <title>City management</title>
       </Head>
       <div>
-        <Card className="py-10 lg:w-[calc(96%)] mx-auto my-5">
-          <CardHeader floated={false} shadow={false} className="rounded-none">
-            <div className="mb-8 flex items-center justify-between gap-8">
-              <div>
-                <Typography variant="h5" color="blue-gray">
-                  City list
-                </Typography>
-                <Typography color="gray" className="mt-1 font-normal">
-                  See information about all city
-                </Typography>
-              </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                <Button
-                  className="flex items-center gap-3"
-                  color="blue"
-                  onClick={goToAdd}
-                  size="sm"
-                >
-                  <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add city
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
+        <Card
+          header={BasicListHeader({
+            title: 'City list',
+            smallTitle: 'See information about all city',
+            addButton: {
+              label: 'Add city',
+              url: '/admin/city/add',
+            },
+          })}
+          className="mx-auto my-5 table-list"
+        >
           <TableList
             ref={tableListElement}
             tableConfig={tableConfig}
@@ -176,8 +159,8 @@ const CityList: NextPage = () => {
 
       <DialogConfirm
         isShow={isShowDeleteDialog}
-        title={() => 'Delete city'}
-        body={() => 'Do you want to delete this City?'}
+        title={'Delete district'}
+        body={'Do you want to delete this District?'}
         refusedCallback={refusedDeleteCity}
         acceptedCallback={deleteCity}
       ></DialogConfirm>

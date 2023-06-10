@@ -1,0 +1,9 @@
+.table-list.p-card .p-card-body  {
+  padding: 0.5rem 0;
+}
+
+@media screen and (max-width: 540px){
+  .p-menubar-end {
+    display: none;
+  }
+}

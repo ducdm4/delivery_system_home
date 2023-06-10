@@ -1,5 +1,4 @@
 import Header from './header';
-import Sidebar from './sidebar';
 import React, {
   PropsWithChildren,
   useEffect,
@@ -51,16 +50,10 @@ export default function Layout({ children }: PropsWithChildren) {
       <main>
         {isShowHeader && <Header />}
         <div className={'flex'}>
-          {isShowHeader && (
-            <div className={'sm:block hidden lg:w-[calc(20rem)]'}>
-              <Sidebar />
-            </div>
-          )}
           <div
             className={
-              (isShowHeader
-                ? 'lg:w-[calc(100vw-20rem)] mt-20'
-                : 'lg:w-[calc(100vw)]') + ' relative min-h-[calc(100vh-74px)]'
+              (isShowHeader ? 'lg:w-[calc(98%)] mt-20' : 'lg:w-[calc(100vw)]') +
+              ' relative min-h-[calc(100vh-74px)] m-auto'
             }
           >
             {children}
