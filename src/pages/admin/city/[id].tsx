@@ -1,12 +1,7 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
-import {
-  ArrowLeftIcon,
-  BackspaceIcon,
-  PlusCircleIcon,
-} from '@heroicons/react/24/solid';
 import {
   cityLoading,
   createNewCity,
@@ -16,10 +11,10 @@ import {
 import { KeyValue } from '../../../common/config/interfaces';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
-import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import BasicEditHeader from '../../../common/components/default/masterData/basicEditHeader';
 
 const DetailCity: NextPage = () => {
   const [inputsInitialState, setInputsInitialState] = useState({
@@ -102,51 +97,17 @@ const DetailCity: NextPage = () => {
 
   const header = () => {
     return (
-      <div className="rounded-none p-4">
-        <div className="mb-8 flex items-center justify-between gap-8">
-          <div>
-            <p className={'text-xl font-bold'}>
-              {isEdit ? `Edit City` : `Add City`}
-            </p>
-            <p className={'text-sm'}>
-              {isEdit ? `Edit a city information` : `Add a new City`}
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button
-              className="flex items-center gap-3"
-              severity="success"
-              size="small"
-              onClick={handleSubmit}
-            >
-              <PlusCircleIcon strokeWidth={2} className="h-4 w-4" />
-              Submit
-            </Button>
-            <Button
-              className="flex items-center gap-3"
-              color="yellow"
-              onClick={resetInput}
-              severity="warning"
-              outlined
-              size="small"
-            >
-              <BackspaceIcon strokeWidth={2} className="h-4 w-4" />
-              Reset
-            </Button>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button
-              className="flex items-center gap-3"
-              color="blue"
-              size="small"
-              severity="info"
-              onClick={goToList}
-            >
-              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Back to list
-            </Button>
-          </div>
-        </div>
-      </div>
+      <BasicEditHeader
+        isEdit={isEdit}
+        titleAdd={{ big: `Add City`, small: `Add a new City` }}
+        titleEdit={{
+          big: `Edit City`,
+          small: `Edit a city information`,
+        }}
+        handleSubmit={handleSubmit}
+        resetInput={resetInput}
+        url={`/admin/city`}
+      />
     );
   };
 

@@ -7,10 +7,9 @@ import React, {
   useState,
 } from 'react';
 import { PER_PAGE_ITEM } from '../../config/constant';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import BasicTablePagination from './masterData/pagination';
+import BasicListFilter from './masterData/basicListFilter';
 
 interface Props {
   tableConfig: {
@@ -188,65 +187,23 @@ const TableList = forwardRef(
 
     return (
       <>
-        <div className="rounded-none px-4">
-          <div className="flex flex-col items-center gap-4 md:flex-row">
-            <div className="">
-              <span className="p-input-icon-left w-80">
-                <i className="pi pi-search" />
-                <InputText
-                  className="w-80"
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Search"
-                />
-              </span>
-            </div>
-            <Button
-              severity="success"
-              size="small"
-              disabled={loadingStatus === 'loading'}
-              onClick={handleSubmitSearch}
-            >
-              {loadingStatus === 'loading' ? (
-                <ProgressSpinner strokeWidth="8" animationDuration="2s" />
-              ) : (
-                'Submit'
-              )}
-            </Button>
-            <Button
-              disabled={loadingStatus === 'loading'}
-              onClick={handleReset}
-              size="small"
-              severity="secondary"
-            >
-              {loadingStatus === 'loading' ? (
-                <ProgressSpinner strokeWidth="8" animationDuration="2s" />
-              ) : (
-                'Reset'
-              )}
-            </Button>
-          </div>
-          <div className={'flex-row flex gap-8 mt-5'}>
-            {tableConfig.filters.map((filterItem, index) => (
-              <div key={`${filterItem.key}-div`} className={'basis-1/4'}>
-                <Dropdown
-                  value={filterData[index].value}
-                  onChange={(e) => handleChangeFilter(e.value, index)}
-                  options={filterItem.data}
-                  optionLabel="name"
-                  className={'w-full p-inputtext-sm'}
-                  placeholder={filterItem.label}
-                  name={filterItem.key}
-                  key={`${filterItem.key}-sel`}
-                  showClear
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <BasicListFilter
+          keyword={keyword}
+          tableFilter={tableConfig.filters}
+          filterData={filterData}
+          setKeyword={setKeyword}
+          handleReset={handleReset}
+          handleSubmitSearch={handleSubmitSearch}
+          handleChangeFilter={handleChangeFilter}
+          loadingStatus={loadingStatus}
+        />
         <div className="overflow-scroll p-0 relative min-h-0">
           {loadingStatus === 'loading' && (
-            <ProgressSpinner strokeWidth="8" animationDuration="2s" />
+            <ProgressSpinner
+              style={{ width: '22px', height: '22px' }}
+              strokeWidth="8"
+              animationDuration="2s"
+            />
           )}
           {loadingStatus !== 'loading' && (
             <table className="mt-4 w-full min-w-max table-auto text-left">
@@ -302,38 +259,11 @@ const TableList = forwardRef(
           )}
         </div>
         {tableData.length > 0 && (
-          <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-            <p className="text-sm">
-              Page {pagingInfo.currentPage} of {pagingInfo.totalPage}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                disabled={
-                  pagingInfo.currentPage === 1 || loadingStatus === 'loading'
-                }
-                text
-                raised
-                severity="info"
-                size="small"
-                onClick={() => handleChangePage('desc')}
-              >
-                Previous
-              </Button>
-              <Button
-                disabled={
-                  pagingInfo.currentPage === pagingInfo.totalPage ||
-                  loadingStatus === 'loading'
-                }
-                text
-                raised
-                severity="info"
-                size="small"
-                onClick={() => handleChangePage('asc')}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <BasicTablePagination
+            pagingInfo={pagingInfo}
+            loadingStatus={loadingStatus}
+            handleChangePage={handleChangePage}
+          />
         )}
       </>
     );

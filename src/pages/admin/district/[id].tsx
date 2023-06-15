@@ -3,11 +3,6 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import {
-  ArrowLeftIcon,
-  BackspaceIcon,
-  PlusCircleIcon,
-} from '@heroicons/react/24/solid';
-import {
   districtLoading,
   createNewDistrict,
   getDistrictInfo,
@@ -17,11 +12,11 @@ import { KeyValue } from '../../../common/config/interfaces';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
 import { getCityListFilter } from '../../../features/city/citySlice';
-import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dropdown } from 'primereact/dropdown';
+import BasicEditHeader from '../../../common/components/default/masterData/basicEditHeader';
 
 interface CityItem {
   id: number;
@@ -109,7 +104,15 @@ const DetailDistrict: NextPage = () => {
         ).unwrap();
         response.then((resData) => {
           if (resData.isSuccess) {
-            setInputs(resData.data.district);
+            setInputs((old) => {
+              return {
+                ...resData.data.district,
+                city: {
+                  id: resData.data.district.city.id,
+                  name: resData.data.district.city.name,
+                },
+              };
+            });
             setInputsInitialState(resData.data.district);
           }
         });
@@ -120,10 +123,6 @@ const DetailDistrict: NextPage = () => {
       setCityList(listCityData.data.list);
     });
   }, [router.query]);
-
-  async function goToList() {
-    await router.push(`/admin/district`);
-  }
 
   const handleChangeCity = (val: { id: number; name: string }) => {
     return setInputs((old) => {
@@ -136,51 +135,17 @@ const DetailDistrict: NextPage = () => {
 
   const header = () => {
     return (
-      <div className="rounded-none p-4">
-        <div className="mb-8 flex items-center justify-between gap-8">
-          <div>
-            <p className={'text-xl font-bold'}>
-              {isEdit ? `Edit District` : `Add District`}
-            </p>
-            <p className={'text-sm'}>
-              {isEdit ? `Edit a district information` : `Add a new District`}
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button
-              className="flex items-center gap-3"
-              severity="success"
-              size="small"
-              onClick={handleSubmit}
-            >
-              <PlusCircleIcon strokeWidth={2} className="h-4 w-4" />
-              Submit
-            </Button>
-            <Button
-              className="flex items-center gap-3"
-              color="yellow"
-              onClick={resetInput}
-              severity="warning"
-              outlined
-              size="small"
-            >
-              <BackspaceIcon strokeWidth={2} className="h-4 w-4" />
-              Reset
-            </Button>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button
-              className="flex items-center gap-3"
-              color="blue"
-              size="small"
-              severity="info"
-              onClick={goToList}
-            >
-              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Back to list
-            </Button>
-          </div>
-        </div>
-      </div>
+      <BasicEditHeader
+        isEdit={isEdit}
+        titleAdd={{ big: `Add District`, small: `Add a new District` }}
+        titleEdit={{
+          big: `Edit District`,
+          small: `Edit a district information`,
+        }}
+        handleSubmit={handleSubmit}
+        resetInput={resetInput}
+        url={`/admin/district`}
+      />
     );
   };
 

@@ -18,7 +18,6 @@ const DialogConfirm: NextPage<Props> = ({
   acceptedCallback,
 }) => {
   useEffect(() => {
-    console.log('isShow', isShow);
     if (isShow) {
       confirmDialog({
         message: body,

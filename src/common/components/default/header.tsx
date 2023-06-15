@@ -97,7 +97,7 @@ export default function Header() {
 
   return (
     <Menubar
-      className={'fixed w-[98%] left-[1%] top-4 z-10 justify-between'}
+      className={'fixed w-[98%] left-[1%] top-1 z-10 justify-between'}
       model={items}
       start={start}
       end={end}

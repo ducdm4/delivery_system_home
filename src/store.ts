@@ -5,6 +5,7 @@ import authReducer from './features/auth/authSlice';
 import userReducer from './features/user/userSlice';
 import cityReducer from './features/city/citySlice';
 import districtReducer from './features/district/districtSlice';
+import wardReducer from './features/ward/wardSlice';
 
 export function makeStore() {
   return configureStore({
@@ -14,6 +15,7 @@ export function makeStore() {
       user: userReducer,
       city: cityReducer,
       district: districtReducer,
+      ward: wardReducer,
     },
   });
 }
