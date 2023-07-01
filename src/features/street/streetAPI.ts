@@ -1,10 +1,10 @@
 import { useAPI } from '../../common/hooks/useAPI';
 import { KeyValue } from '../../common/config/interfaces';
 
-export const addNewWard = async (data: KeyValue) => {
+export const addNewStreet = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: 'wards',
+      url: 'streets',
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -16,10 +16,10 @@ export const addNewWard = async (data: KeyValue) => {
   return response;
 };
 
-export const getWardById = async (data: KeyValue) => {
+export const getStreetById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards/${data.id}`,
+      url: `streets/${data.id}`,
       method: 'GET',
     },
     true,
@@ -27,10 +27,10 @@ export const getWardById = async (data: KeyValue) => {
   return response;
 };
 
-export const editWardById = async (data: KeyValue) => {
+export const editStreetById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards/${data.id}`,
+      url: `streets/${data.id}`,
       method: 'PUT',
       header: {
         'Content-Type': 'application/json',
@@ -42,10 +42,10 @@ export const editWardById = async (data: KeyValue) => {
   return response;
 };
 
-export const getAllWardsFilter = async (data: KeyValue) => {
+export const getAllStreetsFilter = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards${data.query}`,
+      url: `streets${data.query}`,
       method: 'GET',
     },
     true,
@@ -53,10 +53,10 @@ export const getAllWardsFilter = async (data: KeyValue) => {
   return response;
 };
 
-export const deleteWardById = async (data: KeyValue) => {
+export const deleteStreetById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards/${data.id}`,
+      url: `streets/${data.id}`,
       method: 'DELETE',
     },
     true,

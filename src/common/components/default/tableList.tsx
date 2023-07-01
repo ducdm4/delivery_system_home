@@ -243,7 +243,7 @@ const TableList = forwardRef(
                 </tr>
               </thead>
               <tbody>
-                {tableData.length === 0 && (
+                {tableData && tableData.length === 0 && (
                   <tr>
                     <td
                       className={'p-4 border-b border-blue-gray-50'}

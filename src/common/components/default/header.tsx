@@ -30,6 +30,12 @@ export default function Header() {
           },
         },
         {
+          label: 'Street',
+          command: () => {
+            router.push('/admin/street');
+          },
+        },
+        {
           separator: true,
         },
         {
@@ -70,6 +76,9 @@ export default function Header() {
       items: [
         {
           label: 'Profile',
+          command: () => {
+            router.push('/admin/profile');
+          },
         },
         {
           label: 'Notifications',
@@ -82,7 +91,7 @@ export default function Header() {
   ];
 
   const start = (
-    <p className={'font-bold text-xl text-green-400 pr-5'}>Delivery System</p>
+    <p className={'font-bold text-xl text-gray-700 pr-5'}>Delivery System</p>
   );
   const end = (
     <div className={'flex items-center '}>
@@ -97,7 +106,9 @@ export default function Header() {
 
   return (
     <Menubar
-      className={'fixed w-[98%] left-[1%] top-1 z-10 justify-between'}
+      className={
+        'fixed lg:w-[1440px] left-[calc((100vw-1440px)/2)] top-2 z-10 justify-between'
+      }
       model={items}
       start={start}
       end={end}

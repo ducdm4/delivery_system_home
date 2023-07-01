@@ -8,7 +8,7 @@ export interface APIInfo {
   url: string;
   data?: any;
   method: string;
-  header?: object;
+  header?: KeyValue;
 }
 
 export interface KeyValue {

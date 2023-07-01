@@ -1,8 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import type { AppState, AppThunk } from '../../store';
-import { getSelfProfile } from './userAPI';
-import { KeyValue, LoginData } from '../../common/config/interfaces';
+import type { AppState } from '../../store';
+import {
+  getSelfProfile,
+  updateSelfProfileAPI,
+  updatePasswordAPI,
+} from './userAPI';
+import { KeyValue } from '../../common/config/interfaces';
 
 export interface UserState {
   status: 'idle' | 'loading' | 'failed';
@@ -39,6 +43,20 @@ export const getLoggedInProfile = createAsyncThunk(
   },
 );
 
+export const updateSelfProfile = createAsyncThunk(
+  'user/updateSelfProfile',
+  async (payload: KeyValue) => {
+    return await updateSelfProfileAPI(payload);
+  },
+);
+
+export const updatePassword = createAsyncThunk(
+  'user/updatePassword',
+  async (payload: KeyValue) => {
+    return await updatePasswordAPI(payload);
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -54,6 +72,22 @@ export const userSlice = createSlice({
         if (response.isSuccess) {
           state.userDetail = response.data['userInfo'];
         }
+      });
+
+    builder
+      .addCase(updateSelfProfile.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateSelfProfile.fulfilled, (state, action) => {
+        state.status = 'idle';
+      });
+
+    builder
+      .addCase(updatePassword.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.status = 'idle';
       });
   },
 });

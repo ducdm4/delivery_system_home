@@ -5,7 +5,10 @@ export async function login(userInfo: LoginData) {
   const response = await useAPI(
     {
       url: `auth/login`,
-      data: userInfo,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(userInfo),
       method: 'POST',
     },
     false,

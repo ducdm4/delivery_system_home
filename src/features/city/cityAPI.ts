@@ -6,7 +6,10 @@ export const addNewCity = async (data: KeyValue) => {
     {
       url: 'cities',
       method: 'POST',
-      data,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(data),
     },
     true,
   );
@@ -29,7 +32,10 @@ export const editCityById = async (data: KeyValue) => {
     {
       url: `cities/${data.id}`,
       method: 'PUT',
-      data,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(data),
     },
     true,
   );

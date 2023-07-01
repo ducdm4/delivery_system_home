@@ -47,13 +47,13 @@ export default function Layout({ children }: PropsWithChildren) {
 
   return (
     <>
-      <main>
+      <main className={'bg-gray-100'}>
         {isShowHeader && <Header />}
         <div className={'flex'}>
           <div
             className={
-              (isShowHeader ? 'lg:w-[calc(98%)] mt-20' : 'lg:w-[calc(100vw)]') +
-              ' relative min-h-[calc(100vh-74px)] m-auto'
+              (isShowHeader ? 'mt-[5.5rem]' : '') +
+              ' lg:w-[1440px] relative min-h-[calc(100vh-74px)] m-auto'
             }
           >
             {children}

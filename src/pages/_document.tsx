@@ -3,7 +3,7 @@ import React from 'react';
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html>
+      <Html className={'min-h-[100vh] bg-gray-100'}>
         <Head>
           <meta name="description" content="Delivery system by DucDM" />
           <meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />

@@ -8,10 +8,10 @@ import {
 } from '../../../common/config/interfaces';
 import { useRouter } from 'next/router';
 import {
-  deleteWardThunk,
-  getWardListFilter,
-  wardLoading,
-} from '../../../features/ward/wardSlice';
+  deleteStreetThunk,
+  getStreetListFilter,
+  streetLoading,
+} from '../../../features/street/streetSlice';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import DialogConfirm from '../../../common/components/default/dialogConfirm';
 import { toast } from 'react-toastify';
@@ -19,10 +19,11 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import BasicListHeader from '../../../common/components/default/masterData/basicListHeader';
 import { getDistrictListFilter } from '../../../features/district/districtSlice';
+import { getWardListFilter } from '../../../features/ward/wardSlice';
 
 const WardList: NextPage = () => {
   const [tableConfig, setTableConfig] = useState({
-    url: '/ward',
+    url: '/street',
     header: [
       {
         label: 'Name',
@@ -32,6 +33,11 @@ const WardList: NextPage = () => {
       {
         label: 'Search name',
         key: 'slug',
+      },
+      {
+        label: 'Ward',
+        key: 'ward',
+        isSort: true,
       },
       {
         label: 'District',
@@ -50,28 +56,28 @@ const WardList: NextPage = () => {
     ],
     filters: [
       {
-        key: 'district',
-        label: 'District',
+        key: 'ward',
+        label: 'Ward',
         data: [],
       },
     ],
   });
   const [isShowDeleteDialog, setIsShowDeleteDialog] = useState(false);
-  const [currentWardDelete, setCurrentWardDelete] = useState({
+  const [currentStreetDelete, setCurrentStreetDelete] = useState({
     id: -1,
     name: '',
   });
-  const wardLoadingStatus = useAppSelector(wardLoading);
+  const streetLoadingStatus = useAppSelector(streetLoading);
   const tableListElement = useRef<TableListRefObject>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   async function goToEdit(id: number) {
-    await router.push(`/admin/ward/${id}`);
+    await router.push(`/admin/street/${id}`);
   }
 
   async function getData(query = '') {
-    const res = await dispatch(getWardListFilter({ query })).unwrap();
+    const res = await dispatch(getStreetListFilter({ query })).unwrap();
     if (res.isSuccess) {
       return res.data;
     } else {
@@ -79,17 +85,17 @@ const WardList: NextPage = () => {
     }
   }
 
-  function confirmDeleteWard(id: number, name: string) {
-    setCurrentWardDelete({
+  function confirmDeleteStreet(id: number, name: string) {
+    setCurrentStreetDelete({
       id,
       name,
     });
     setIsShowDeleteDialog(true);
   }
 
-  function deleteWard() {
+  function deleteStreet() {
     const res = dispatch(
-      deleteWardThunk({ id: currentWardDelete.id }),
+      deleteStreetThunk({ id: currentStreetDelete.id }),
     ).unwrap();
     res.then((successData) => {
       if (successData.isSuccess) {
@@ -101,32 +107,35 @@ const WardList: NextPage = () => {
         if (tableListElement.current) {
           tableListElement.current.handleSearch();
         }
-        refusedDeleteWard();
+        refusedDeleteStreet();
       }
     });
   }
 
-  function refusedDeleteWard() {
+  function refusedDeleteStreet() {
     setIsShowDeleteDialog(false);
-    setCurrentWardDelete({
+    setCurrentStreetDelete({
       id: -1,
       name: '',
     });
   }
 
   useEffect(() => {
-    const getDistrict = dispatch(getDistrictListFilter({ query: '' })).unwrap();
-    getDistrict.then((listDistrict) => {
+    const getWard = dispatch(getWardListFilter({ query: '' })).unwrap();
+    getWard.then((listWard) => {
       setTableConfig((old) => {
-        const indexDistrict = old.filters.findIndex(
-          (x) => x.key === 'district',
-        );
+        const indexWard = old.filters.findIndex((x) => x.key === 'ward');
         const newVal = old;
-        newVal.filters[indexDistrict].data = listDistrict.data.list.map(
-          (district: { id: number; name: string; cityName: string }) => {
+        newVal.filters[indexWard].data = listWard.data.list.map(
+          (ward: {
+            id: number;
+            name: string;
+            districtName: string;
+            cityName: string;
+          }) => {
             return {
-              id: district.id,
-              name: `${district.name}, ${district.cityName}`,
+              id: ward.id,
+              name: `${ward.name}, ${ward.districtName}, ${ward.cityName}`,
             };
           },
         );
@@ -143,6 +152,7 @@ const WardList: NextPage = () => {
           <tr key={index}>
             <td className={tdClasses}>{row.name}</td>
             <td className={tdClasses}>{row.slug}</td>
+            <td className={tdClasses}>{row.wardName}</td>
             <td className={tdClasses}>{row.districtName}</td>
             <td className={tdClasses}>{row.cityName}</td>
             <td className={tdClasses}>
@@ -156,7 +166,7 @@ const WardList: NextPage = () => {
               />
               <Button
                 icon="pi pi-trash"
-                onClick={() => confirmDeleteWard(row.id, row.name)}
+                onClick={() => confirmDeleteStreet(row.id, row.name)}
                 rounded
                 aria-label="Filter"
                 size="small"
@@ -173,16 +183,16 @@ const WardList: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Ward management</title>
+        <title>Street management</title>
       </Head>
       <div>
         <Card
           header={BasicListHeader({
-            title: 'Ward list',
-            smallTitle: 'See information about all ward',
+            title: 'Street list',
+            smallTitle: 'See information about all street',
             addButton: {
-              label: 'Add ward',
-              url: '/admin/ward/add',
+              label: 'Add street',
+              url: '/admin/street/add',
             },
           })}
           className="mx-auto my-5 table-list"
@@ -192,7 +202,7 @@ const WardList: NextPage = () => {
             tableConfig={tableConfig}
             rowList={rowList}
             getData={getData}
-            loadingStatus={wardLoadingStatus}
+            loadingStatus={streetLoadingStatus}
           />
         </Card>
       </div>
@@ -201,8 +211,8 @@ const WardList: NextPage = () => {
         isShow={isShowDeleteDialog}
         title={'Delete ward'}
         body={'Do you want to delete this Ward?'}
-        refusedCallback={refusedDeleteWard}
-        acceptedCallback={deleteWard}
+        refusedCallback={refusedDeleteStreet}
+        acceptedCallback={deleteStreet}
       ></DialogConfirm>
     </>
   );

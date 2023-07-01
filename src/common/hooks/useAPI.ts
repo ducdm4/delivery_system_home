@@ -6,14 +6,13 @@ import {
 } from '../config/interfaces';
 import { toast } from 'react-toastify';
 import Router from 'next/router';
+import { imageType } from '../config/constant';
 
 export async function useAPI(
   apiInfo: APIInfo,
   isAuthorized = true,
 ): Promise<KeyValue> {
-  const baseHeader: KeyValue = {
-    'Content-Type': 'application/json',
-  };
+  const baseHeader: KeyValue = {};
   if (isAuthorized)
     baseHeader['Authorization'] = `Bearer ${localStorage.getItem(
       process.env.NEXT_PUBLIC_API_KEY as string,
@@ -32,23 +31,28 @@ export async function useAPI(
         ...apiInfo.header,
       },
     };
-    if (JSON.stringify(apiInfo.data))
-      apiInit.body = JSON.stringify(apiInfo.data);
+    apiInit.body = apiInfo.data;
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}:${process.env.NEXT_PUBLIC_API_PORT}/${apiInfo.url}`,
       apiInit,
     );
-    const result = await response.json();
-
-    if (!response.ok) {
-      const res = result as FailedResponse;
-      handleError(res);
-      returnData.isSuccess = false;
-      returnData.statusCode = res.statusCode;
-      returnData.message = res.message;
+    if (
+      imageType.findIndex((x) => x === response.headers.get('Content-Type')) >
+      -1
+    ) {
+      returnData.data = await response.blob();
     } else {
-      const res = result as SuccessResponse;
-      returnData.data = res.data;
+      const result = await response.json();
+      if (!response.ok) {
+        const res = result as FailedResponse;
+        handleError(res);
+        returnData.isSuccess = false;
+        returnData.statusCode = res.statusCode;
+        returnData.message = res.message;
+      } else {
+        const res = result as SuccessResponse;
+        returnData.data = res.data;
+      }
     }
   } catch (e) {
     returnData.isSuccess = false;

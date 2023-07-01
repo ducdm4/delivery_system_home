@@ -99,35 +99,37 @@ const CityList: NextPage = () => {
 
   function rowList(data: Array<KeyValue>) {
     const tdClasses = 'p-2 border-b border-blue-gray-50';
-    return (
-      <>
-        {data.map((row, index: number) => (
-          <tr key={index}>
-            <td className={tdClasses}>{row.name}</td>
-            <td className={tdClasses}>{row.slug}</td>
-            <td className={tdClasses}>
-              <Button
-                icon="pi pi-pencil"
-                onClick={() => goToEdit(row.id)}
-                rounded
-                aria-label="Filter"
-                size="small"
-                severity="success"
-              />
-              <Button
-                icon="pi pi-trash"
-                onClick={() => confirmDeleteCity(row.id, row.name)}
-                rounded
-                aria-label="Filter"
-                size="small"
-                severity="danger"
-                className={'!ml-4'}
-              />
-            </td>
-          </tr>
-        ))}
-      </>
-    );
+    if (data.length) {
+      return (
+        <>
+          {data.map((row, index: number) => (
+            <tr key={index}>
+              <td className={tdClasses}>{row.name}</td>
+              <td className={tdClasses}>{row.slug}</td>
+              <td className={tdClasses}>
+                <Button
+                  icon="pi pi-pencil"
+                  onClick={() => goToEdit(row.id)}
+                  rounded
+                  aria-label="Filter"
+                  size="small"
+                  severity="success"
+                />
+                <Button
+                  icon="pi pi-trash"
+                  onClick={() => confirmDeleteCity(row.id, row.name)}
+                  rounded
+                  aria-label="Filter"
+                  size="small"
+                  severity="danger"
+                  className={'!ml-4'}
+                />
+              </td>
+            </tr>
+          ))}
+        </>
+      );
+    }
   }
 
   return (

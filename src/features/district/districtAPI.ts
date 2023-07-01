@@ -6,7 +6,10 @@ export const addNewDistrict = async (data: KeyValue) => {
     {
       url: 'districts',
       method: 'POST',
-      data,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(data),
     },
     true,
   );
@@ -29,7 +32,10 @@ export const editDistrictById = async (data: KeyValue) => {
     {
       url: `districts/${data.id}`,
       method: 'PUT',
-      data,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(data),
     },
     true,
   );
