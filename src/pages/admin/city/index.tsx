@@ -99,7 +99,7 @@ const CityList: NextPage = () => {
 
   function rowList(data: Array<KeyValue>) {
     const tdClasses = 'p-2 border-b border-blue-gray-50';
-    if (data.length) {
+    if (data && data.length) {
       return (
         <>
           {data.map((row, index: number) => (

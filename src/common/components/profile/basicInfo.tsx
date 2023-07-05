@@ -3,6 +3,7 @@ import { Calendar } from 'primereact/calendar';
 import { InputMask } from 'primereact/inputmask';
 import { SelectButton } from 'primereact/selectbutton';
 import React from 'react';
+import { useRouter } from 'next/router';
 
 interface keyStringValue {
   [key: string]: any;
@@ -19,6 +20,7 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
     { name: 'Male', value: true },
     { name: 'Female', value: false },
   ];
+  const router = useRouter();
 
   return (
     <>
@@ -27,10 +29,10 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
           <span className="p-float-label">
             <InputText
               id="wardname"
-              name="name"
+              name="email"
               value={inputs.email}
               onChange={(e) => handleChange(e)}
-              disabled={true}
+              disabled={router.query.id !== 'add'}
               className={'w-full p-inputtext-sm'}
             />
             <label htmlFor="wardname">Email</label>
@@ -67,6 +69,7 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
             <Calendar
               inputId="birth_date"
               value={inputs.dob}
+              dateFormat="dd/mm/yy"
               className={'w-full p-inputtext-sm'}
               onChange={(e) => setInputByValue('dob', e.value)}
             />

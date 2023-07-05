@@ -90,7 +90,7 @@ const PasswordInfo = ({ showPopupPassword, setShowPopupPassword }: Props) => {
         onHide={() => setShowPopupPassword(false)}
       >
         <div className="card flex justify-content-center">
-          <Message text="Password must have at least 6 characters, 1 uppercase, 1 lowercase, 1 digit" />
+          <Message text="Password must have at least 6 characters and contain 1 uppercase, 1 lowercase, 1 digit" />
         </div>
         <div className={'flex-col flex mt-8'}>
           <span className="p-float-label w-full">

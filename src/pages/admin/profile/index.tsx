@@ -1,38 +1,40 @@
 import { NextPage } from 'next';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../common/hooks';
+import UserInfo from '../../../common/components/profile/userInfo';
+import { Button } from 'primereact/button';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
+import React, { useEffect, useState } from 'react';
 import {
   getLoggedInProfile,
   updateSelfProfile,
   userLoading,
   userLoggedInDetail,
 } from '../../../features/user/userSlice';
-import { Button } from 'primereact/button';
-import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
-import { Card } from 'primereact/card';
-import { Divider } from 'primereact/divider';
-import ProfileAddressInfo from '../../../common/components/profile/addressInfo';
+import { toast } from 'react-toastify';
+import PasswordInfo from '../../../common/components/profile/passwordInfo';
 import {
   createNewPhoto,
   getPhotoInfo,
 } from '../../../features/photo/photoSlice';
 import { imageType } from '../../../common/config/constant';
-import { toast } from 'react-toastify';
-import ProfileBasicInfo from '../../../common/components/profile/basicInfo';
-import ProfileImageInfo from '../../../common/components/profile/imageInfo';
-import { ProgressSpinner } from 'primereact/progressspinner';
-import PasswordInfo from '../../../common/components/profile/passwordInfo';
+import { useAppDispatch, useAppSelector } from '../../../common/hooks';
+import Head from 'next/head';
+import { KeyValue } from '../../../common/config/interfaces';
+import { format } from 'date-fns';
+import { Card } from 'primereact/card';
 
 interface keyStringAny {
   [key: string]: any;
 }
 
 const Profile: NextPage = () => {
-  const dispatch = useAppDispatch();
-  const keyStringAnyObj: keyStringAny = {};
-  const userLoadingStatus = useAppSelector(userLoading);
   const [showPopupPassword, setShowPopupPassword] = useState(false);
+  const dispatch = useAppDispatch();
+  const userLoadingStatus = useAppSelector(userLoading);
   const userDetail = useAppSelector(userLoggedInDetail);
+
+  const keyStringAnyObj: KeyValue = {};
+
   const [inputs, setInputs] = useState({
     email: '',
     firstName: '',
@@ -110,60 +112,11 @@ const Profile: NextPage = () => {
     getUserProfile();
   }, []);
 
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (['building', 'detail'].includes(name)) {
-      const oldAddress = inputs.address;
-      const newAddress = {
-        ...oldAddress,
-        [name]: value,
-      };
-      setInputByValue('address', newAddress);
-    } else {
-      setInputByValue(name, value);
-    }
-  }
-
-  function setInputByValue(key: string, val: any) {
-    setInputs((values) => {
-      return { ...values, [key]: val };
-    });
-  }
-
   function setErrorByValue(key: string, val: any) {
     setInputErrors((values) => {
       return { ...values, [key]: val };
     });
   }
-
-  const handleChangeSelect = (
-    val: { id: number; name: string },
-    key: string,
-  ) => {
-    let addressNew = inputs.address;
-    const addressToAdd: keyStringAny = {};
-    const levelKey = ['street', 'ward', 'district', 'city'];
-    const levelValue = [0, 1, 2, 4];
-    let total = 0;
-    let count = 0;
-    while (total < levelValue[levelKey.findIndex((x) => x === key)]) {
-      addressToAdd[levelKey[count]] = keyStringAnyObj;
-      total += levelValue[count];
-      count++;
-    }
-    addressToAdd[key] = val;
-    addressNew = {
-      ...inputs.address,
-      ...addressToAdd,
-    };
-    return setInputs((old) => {
-      return {
-        ...old,
-        address: addressNew,
-      };
-    });
-  };
 
   async function handleSubmit() {
     const input: HTMLInputElement = document.getElementById(
@@ -174,7 +127,12 @@ const Profile: NextPage = () => {
       const resPhoto = await handleUploadImage(input.files[0]);
       if (resPhoto) {
         profilePictureObj = { id: resPhoto.data.photoInfo.id };
-        setInputByValue('profilePicture', { id: resPhoto.data.photoInfo.id });
+        setInputs((values) => {
+          return {
+            ...values,
+            profilePicture: { id: resPhoto.data.photoInfo.id },
+          };
+        });
       }
     }
     const sendAddressData = {
@@ -184,11 +142,16 @@ const Profile: NextPage = () => {
       wardId: inputs.address.ward.id || null,
       streetId: inputs.address.street.id || null,
     };
+    let dob = '';
+    if (inputs.dob) {
+      dob = format(new Date(inputs.dob), 'yyyy-MM-dd');
+    }
     const res = dispatch(
       updateSelfProfile({
         ...inputs,
         profilePicture: profilePictureObj,
         address: sendAddressData,
+        dob,
       }),
     ).unwrap();
     res.then((data) => {
@@ -268,35 +231,23 @@ const Profile: NextPage = () => {
   }
 
   return (
-    <Card header={header} className="mx-auto my-5">
-      <div>
-        <ProfileImageInfo
+    <>
+      <Head>
+        <title>Profile</title>
+      </Head>
+      <Card header={header} className="mx-auto my-5">
+        <UserInfo
           inputs={inputs}
           inputsError={inputsError}
-          setInputByValue={setInputByValue}
+          setInputs={setInputs}
+          isShowProfilePicture={true}
         />
-        <Divider align="center" className={'!mt-10'}>
-          <span className="text-xl font-bold text-green-700">BASIC INFO</span>
-        </Divider>
-        <ProfileBasicInfo
-          inputs={inputs}
-          handleChange={handleChange}
-          setInputByValue={setInputByValue}
-        />
-        <Divider align="center" className={'!mt-10'}>
-          <span className="text-xl font-bold text-green-700">ADDRESS INFO</span>
-        </Divider>
-        <ProfileAddressInfo
-          inputs={inputs}
-          handleChangeSelect={handleChangeSelect}
-          handleChange={handleChange}
-        />
-        <PasswordInfo
-          showPopupPassword={showPopupPassword}
-          setShowPopupPassword={setShowPopupPassword}
-        />
-      </div>
-    </Card>
+      </Card>
+      <PasswordInfo
+        showPopupPassword={showPopupPassword}
+        setShowPopupPassword={setShowPopupPassword}
+      />
+    </>
   );
 };
 

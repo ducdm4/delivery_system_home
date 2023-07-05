@@ -258,7 +258,7 @@ const TableList = forwardRef(
             </table>
           )}
         </div>
-        {tableData.length > 0 && (
+        {tableData && tableData.length > 0 && (
           <BasicTablePagination
             pagingInfo={pagingInfo}
             loadingStatus={loadingStatus}
