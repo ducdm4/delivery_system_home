@@ -8,6 +8,7 @@ import districtReducer from './features/district/districtSlice';
 import wardReducer from './features/ward/wardSlice';
 import photoReducer from './features/photo/photoSlice';
 import streetReducer from './features/street/streetSlice';
+import stationReducer from './features/station/stationSlice';
 
 export function makeStore() {
   return configureStore({
@@ -20,6 +21,7 @@ export function makeStore() {
       ward: wardReducer,
       photo: photoReducer,
       street: streetReducer,
+      station: stationReducer,
     },
   });
 }

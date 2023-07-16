@@ -5,16 +5,19 @@ import {
   getWardById,
   editWardById,
   deleteWardById,
+  getWardNotUnderManageAPI,
 } from './wardAPI';
 import { KeyValue } from '../../common/config/interfaces';
 import { AppState } from '../../store';
 
 export interface WardState {
   status: 'idle' | 'loading' | 'failed';
+  currentWardList: Array<KeyValue>;
 }
 
 const initialState: WardState = {
   status: 'idle',
+  currentWardList: [],
 };
 
 export const createNewWard = createAsyncThunk(
@@ -52,6 +55,13 @@ export const deleteWardThunk = createAsyncThunk(
   },
 );
 
+export const getWardNotUnderManage = createAsyncThunk(
+  'ward/getWardNotUnderManage',
+  async (data: KeyValue) => {
+    return await getWardNotUnderManageAPI(data);
+  },
+);
+
 export const WardSlice = createSlice({
   name: 'ward',
   initialState,
@@ -79,6 +89,17 @@ export const WardSlice = createSlice({
       })
       .addCase(getWardListFilter.fulfilled, (state, action) => {
         state.status = 'idle';
+        if (action.payload.isSuccess) {
+          state.currentWardList = action.payload.data.list;
+        }
+      });
+
+    builder
+      .addCase(getWardNotUnderManage.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getWardNotUnderManage.fulfilled, (state, action) => {
+        state.status = 'idle';
       });
   },
 });
@@ -88,3 +109,4 @@ export const {} = WardSlice.actions;
 export default WardSlice.reducer;
 
 export const wardLoading = (state: AppState) => state.ward.status;
+export const currentWardList = (state: AppState) => state.ward.currentWardList;

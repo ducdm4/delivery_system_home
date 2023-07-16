@@ -5,6 +5,11 @@ import ProfileAddressInfo from '../../../common/components/profile/addressInfo';
 import ProfileBasicInfo from '../../../common/components/profile/basicInfo';
 import ProfileImageInfo from '../../../common/components/profile/imageInfo';
 import { KeyValue } from '../../config/interfaces';
+import {
+  handleChange,
+  handleChangeSelect,
+  setInputByValue,
+} from '../../functions';
 
 interface Props {
   inputs: KeyValue;
@@ -21,48 +26,19 @@ const UserInfo = ({
 }: Props) => {
   const keyStringAnyObj: KeyValue = {};
 
-  const handleChangeSelect = (
+  const handleSelectChanged = (
     val: { id: number; name: string },
     key: string,
   ) => {
-    let addressNew = inputs.address;
-    const addressToAdd: KeyValue = {};
-    const levelKey = ['street', 'ward', 'district', 'city'];
-    const levelValue = [0, 1, 2, 4];
-    let total = 0;
-    let count = 0;
-    while (total < levelValue[levelKey.findIndex((x) => x === key)]) {
-      addressToAdd[levelKey[count]] = keyStringAnyObj;
-      total += levelValue[count];
-      count++;
-    }
-    addressToAdd[key] = val;
-    addressNew = {
-      ...inputs.address,
-      ...addressToAdd,
-    };
-    return setInputByValue('address', addressNew);
+    handleChangeSelect(val, key, inputs, setInputs);
   };
 
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (['building', 'detail'].includes(name)) {
-      const oldAddress = inputs.address;
-      const newAddress = {
-        ...oldAddress,
-        [name]: value,
-      };
-      setInputByValue('address', newAddress);
-    } else {
-      setInputByValue(name, value);
-    }
+  function handleInputChanged(e: ChangeEvent<HTMLInputElement>) {
+    handleChange(e, inputs, setInputs);
   }
 
-  function setInputByValue(key: string, val: any) {
-    setInputs((values: KeyValue) => {
-      return { ...values, [key]: val };
-    });
+  function setInput(key: string, val: any) {
+    setInputByValue(key, val, setInputs);
   }
 
   return (
@@ -71,7 +47,7 @@ const UserInfo = ({
         <ProfileImageInfo
           inputs={inputs}
           inputsError={inputsError}
-          setInputByValue={setInputByValue}
+          setInputByValue={setInput}
         />
       )}
       <Divider align="center" className={'!mt-10'}>
@@ -79,16 +55,16 @@ const UserInfo = ({
       </Divider>
       <ProfileBasicInfo
         inputs={inputs}
-        handleChange={handleChange}
-        setInputByValue={setInputByValue}
+        handleChange={handleInputChanged}
+        setInputByValue={setInput}
       />
       <Divider align="center" className={'!mt-10'}>
         <span className="text-xl font-bold text-green-700">ADDRESS INFO</span>
       </Divider>
       <ProfileAddressInfo
         inputs={inputs}
-        handleChangeSelect={handleChangeSelect}
-        handleChange={handleChange}
+        handleChangeSelect={handleSelectChanged}
+        handleChange={handleInputChanged}
       />
     </div>
   );

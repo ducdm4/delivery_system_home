@@ -24,12 +24,12 @@ interface Props {
 
 interface sortItem {
   key: string;
-  value: number;
+  value: number | null;
 }
 interface filterItem {
   key: string;
   value: {
-    id: number;
+    id: number | null;
     name: string;
   };
 }
@@ -51,7 +51,7 @@ const TableList = forwardRef(
           return {
             key: filterItem.key,
             value: {
-              id: 0,
+              id: null,
               name: '',
             },
           };
@@ -141,7 +141,11 @@ const TableList = forwardRef(
         }
       });
       filterData.forEach((filterItem) => {
-        if (filterItem.value && filterItem.value.id !== 0) {
+        if (
+          filterItem.value &&
+          filterItem.value.id !== null &&
+          filterItem.value.id !== undefined
+        ) {
           query += `&filter[${filterItem.key}]=${filterItem.value.id}`;
         }
       });

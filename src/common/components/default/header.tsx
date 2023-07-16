@@ -40,33 +40,34 @@ export default function Header() {
         },
         {
           label: 'Route config',
-          icon: 'pi pi-fw pi-external-link',
         },
         {
           label: 'Master config',
-          icon: 'pi pi-fw pi-external-link',
         },
       ],
     },
     {
       label: 'Business',
-      icon: 'pi pi-fw pi-pencil',
+      icon: 'pi pi-fw pi-truck',
       items: [
         {
           label: 'Order',
-          icon: 'pi pi-fw pi-align-left',
+          icon: 'pi pi-fw pi-file',
         },
         {
           label: 'Customer',
-          icon: 'pi pi-fw pi-align-left',
+          icon: 'pi pi-fw pi-users',
         },
         {
           label: 'Employee',
-          icon: 'pi pi-fw pi-align-right',
+          icon: 'pi pi-fw pi-user',
         },
         {
           label: 'Station',
-          icon: 'pi pi-fw pi-align-right',
+          icon: 'pi pi-fw pi-building',
+          command: () => {
+            router.push('/admin/station');
+          },
         },
       ],
     },

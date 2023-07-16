@@ -19,7 +19,7 @@ interface Props {
 interface filterItem {
   key: string;
   value: {
-    id: number;
+    id: number | null;
     name: string;
   };
 }

@@ -22,6 +22,7 @@ import Head from 'next/head';
 import { KeyValue } from '../../../common/config/interfaces';
 import { format } from 'date-fns';
 import { Card } from 'primereact/card';
+import { validateImageFile, prepareAddress } from '../../../common/functions';
 
 interface keyStringAny {
   [key: string]: any;
@@ -57,19 +58,6 @@ const Profile: NextPage = () => {
   const [inputsError, setInputErrors] = useState({
     image: '',
   });
-
-  function prepareAddress(address: keyStringAny, key: string, key2 = '') {
-    if (!address[key]) {
-      return keyStringAnyObj;
-    } else {
-      const res: keyStringAny = {
-        id: address[key].id,
-        name: address[key].name,
-      };
-      if (key2) res[`${key2}Id`] = address[key2].id;
-      return res;
-    }
-  }
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -137,10 +125,10 @@ const Profile: NextPage = () => {
     }
     const sendAddressData = {
       ...inputs.address,
-      cityId: inputs.address.city.id || null,
-      districtId: inputs.address.district.id || null,
-      wardId: inputs.address.ward.id || null,
-      streetId: inputs.address.street.id || null,
+      city: inputs.address.city.id ? inputs.address.city : null,
+      district: inputs.address.district.id ? inputs.address.district : null,
+      ward: inputs.address.ward.id ? inputs.address.ward : null,
+      street: inputs.address.street.id ? inputs.address.street : null,
     };
     let dob = '';
     if (inputs.dob) {
@@ -166,25 +154,14 @@ const Profile: NextPage = () => {
   }
 
   async function handleUploadImage(image: File) {
-    if (validateFile(image)) {
+    const validate = validateImageFile(image);
+    if (validate.check) {
       const formData = new FormData();
       formData.append('image', image as Blob);
       return await dispatch(createNewPhoto(formData)).unwrap();
-    }
-  }
-
-  function validateFile(image: File) {
-    let check = true;
-    if (image.size > 2048000) {
-      setErrorByValue('image', 'Image must smaller than 2mb');
-      check = false;
-    } else if (imageType.findIndex((x) => x === image.type) < 0) {
-      setErrorByValue('image', 'Please select an image');
-      check = false;
     } else {
-      setErrorByValue('image', '');
+      setErrorByValue('image', validate.error);
     }
-    return check;
   }
 
   function header() {

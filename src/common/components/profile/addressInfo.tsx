@@ -18,6 +18,7 @@ interface keyStringValue {
 
 interface Props {
   inputs: keyStringValue;
+  errors?: keyStringValue;
   handleChangeSelect: Function;
   handleChange: Function;
 }
@@ -32,6 +33,7 @@ interface CityDistrictWardItem {
 
 const ProfileAddressInfo = ({
   inputs,
+  errors = {},
   handleChangeSelect,
   handleChange,
 }: Props) => {
@@ -135,6 +137,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="city">City</label>
           </span>
+          <p className={'text-sm text-red-600'}>{errors.city}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -150,6 +153,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="city">District</label>
           </span>
+          <p className={'text-sm text-red-600'}>{errors.district}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -165,6 +169,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="ward">Ward</label>
           </span>
+          <p className={'text-sm text-red-600'}>{errors.ward}</p>
         </div>
       </div>
       <div className={'flex-row flex gap-8 mt-8'}>
@@ -182,6 +187,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="street">Street</label>
           </span>
+          <p className={'text-sm text-red-600'}>{errors.street}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -194,6 +200,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="detail">Detail</label>
           </span>
+          <p className={'text-sm text-red-600'}>{errors.detail}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">

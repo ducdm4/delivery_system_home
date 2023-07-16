@@ -12,6 +12,9 @@
 .custom-file-input::-webkit-file-upload-button {
   visibility: hidden;
 }
+.custom-file-input-2::before {
+  content: "Select image" !important;
+}
 .custom-file-input::before {
   content: "Select profile image";
   color: white;

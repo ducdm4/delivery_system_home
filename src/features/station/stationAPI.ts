@@ -1,10 +1,10 @@
 import { useAPI } from '../../common/hooks/useAPI';
 import { KeyValue } from '../../common/config/interfaces';
 
-export const addNewWard = async (data: KeyValue) => {
+export const addNewStation = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: 'wards',
+      url: 'stations',
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -16,10 +16,10 @@ export const addNewWard = async (data: KeyValue) => {
   return response;
 };
 
-export const getWardById = async (data: KeyValue) => {
+export const getStationById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards/${data.id}`,
+      url: `stations/${data.id}`,
       method: 'GET',
     },
     true,
@@ -27,10 +27,10 @@ export const getWardById = async (data: KeyValue) => {
   return response;
 };
 
-export const editWardById = async (data: KeyValue) => {
+export const editStationById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards/${data.id}`,
+      url: `stations/${data.id}`,
       method: 'PUT',
       header: {
         'Content-Type': 'application/json',
@@ -42,10 +42,10 @@ export const editWardById = async (data: KeyValue) => {
   return response;
 };
 
-export const getAllWardsFilter = async (data: KeyValue) => {
+export const getAllStationsFilter = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards${data.query}`,
+      url: `stations${data.query}`,
       method: 'GET',
     },
     true,
@@ -53,22 +53,11 @@ export const getAllWardsFilter = async (data: KeyValue) => {
   return response;
 };
 
-export const deleteWardById = async (data: KeyValue) => {
+export const deleteStationById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `wards/${data.id}`,
+      url: `stations/${data.id}`,
       method: 'DELETE',
-    },
-    true,
-  );
-  return response;
-};
-
-export const getWardNotUnderManageAPI = async (data: KeyValue) => {
-  const response = await useAPI(
-    {
-      url: `wards/not-under-manage/${data.id}`,
-      method: 'GET',
     },
     true,
   );
