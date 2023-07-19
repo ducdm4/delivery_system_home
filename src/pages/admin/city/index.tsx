@@ -147,7 +147,7 @@ const CityList: NextPage = () => {
               url: '/admin/city/add',
             },
           })}
-          className="mx-auto my-5 table-list"
+          className="!border-none !rounded-none mx-auto my-5 table-list"
         >
           <TableList
             ref={tableListElement}

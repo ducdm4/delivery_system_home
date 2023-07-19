@@ -185,7 +185,7 @@ const WardList: NextPage = () => {
               url: '/admin/ward/add',
             },
           })}
-          className="mx-auto my-5 table-list"
+          className="!border-none !rounded-none mx-auto my-5 table-list"
         >
           <TableList
             ref={tableListElement}

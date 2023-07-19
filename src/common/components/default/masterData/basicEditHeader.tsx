@@ -20,6 +20,7 @@ interface Props {
   handleSubmit: Function;
   resetInput: Function;
   url: string;
+  loading?: string;
 }
 
 const BasicEditHeader = ({

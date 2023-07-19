@@ -64,6 +64,7 @@ const TableList = forwardRef(
     const [pagingInfo, setPagingInfo] = useState({
       currentPage: 1,
       totalPage: 0,
+      total: 0,
     });
 
     useImperativeHandle(ref, () => ({ handleSearch }));
@@ -155,6 +156,7 @@ const TableList = forwardRef(
         return {
           currentPage: res.page,
           totalPage: Math.ceil(res.total / PER_PAGE_ITEM),
+          total: res.total,
         };
       });
     }

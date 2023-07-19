@@ -4,18 +4,21 @@ import { InputMask } from 'primereact/inputmask';
 import { SelectButton } from 'primereact/selectbutton';
 import React from 'react';
 import { useRouter } from 'next/router';
-
-interface keyStringValue {
-  [key: string]: any;
-}
+import { KeyValue } from '../../config/interfaces';
 
 interface Props {
-  inputs: keyStringValue;
+  inputs: KeyValue;
+  inputsError?: KeyValue;
   handleChange: Function;
   setInputByValue: Function;
 }
 
-const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
+const ProfileBasicInfo = ({
+  inputs,
+  handleChange,
+  setInputByValue,
+  inputsError = {},
+}: Props) => {
   const genderOption = [
     { name: 'Male', value: true },
     { name: 'Female', value: false },
@@ -37,6 +40,7 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
             />
             <label htmlFor="wardname">Email</label>
           </span>
+          <p className={'text-sm text-red-600'}>{inputsError.email}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -49,6 +53,7 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
             />
             <label htmlFor="firstname">First name</label>
           </span>
+          <p className={'text-sm text-red-600'}>{inputsError.firstName}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -61,6 +66,7 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
             />
             <label htmlFor="lastname">Last name</label>
           </span>
+          <p className={'text-sm text-red-600'}>{inputsError.lastName}</p>
         </div>
       </div>
       <div className={'flex-row flex gap-8 mt-8'}>
@@ -89,6 +95,7 @@ const ProfileBasicInfo = ({ inputs, handleChange, setInputByValue }: Props) => {
             />
             <label htmlFor="phone">Phone number</label>
           </span>
+          <p className={'text-sm text-red-600'}>{inputsError.phone}</p>
         </div>
         <div className={'basis-1/3'}>
           <div className={'basis-1/3'}>

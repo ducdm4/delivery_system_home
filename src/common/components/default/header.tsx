@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { Menubar } from 'primereact/menubar';
 import { useRouter } from 'next/router';
 import { Avatar } from 'primereact/avatar';
+import { useAppSelector } from '../../hooks';
+import { userLoggedIn } from '../../../features/auth/authSlice';
+import { profileImageState } from '../../../features/photo/photoSlice';
 
 export default function Header() {
   const router = useRouter();
+  const userInfo = useAppSelector(userLoggedIn);
+  const userProfileImage = useAppSelector(profileImageState);
 
   const items = [
     {
@@ -61,6 +66,9 @@ export default function Header() {
         {
           label: 'Employee',
           icon: 'pi pi-fw pi-user',
+          command: () => {
+            router.push('/admin/employee');
+          },
         },
         {
           label: 'Station',
@@ -72,7 +80,7 @@ export default function Header() {
       ],
     },
     {
-      label: 'Duong Duc',
+      label: `${userInfo.firstName} ${userInfo.lastName}`,
       icon: 'pi pi-fw pi-user',
       items: [
         {
@@ -97,10 +105,7 @@ export default function Header() {
   const end = (
     <div className={'flex items-center '}>
       <Avatar className={'lg:!w-[3.5rem] lg:!h-[3.5rem]'} shape="circle">
-        <img
-          className={'object-fill'}
-          src={'https://primefaces.org/cdn/primereact/images/logo.png'}
-        />
+        <img className={'object-cover'} src={userProfileImage} />
       </Avatar>
     </div>
   );
@@ -108,7 +113,7 @@ export default function Header() {
   return (
     <Menubar
       className={
-        'fixed lg:w-[1440px] left-[calc((100vw-1440px)/2)] top-2 z-10 justify-between'
+        'fixed lg:w-full left-0 !px-[calc((100vw-1400px)/2)] z-10 justify-between !rounded-none !border-none'
       }
       model={items}
       start={start}

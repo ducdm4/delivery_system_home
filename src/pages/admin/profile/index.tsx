@@ -16,17 +16,12 @@ import {
   createNewPhoto,
   getPhotoInfo,
 } from '../../../features/photo/photoSlice';
-import { imageType } from '../../../common/config/constant';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import Head from 'next/head';
 import { KeyValue } from '../../../common/config/interfaces';
 import { format } from 'date-fns';
 import { Card } from 'primereact/card';
 import { validateImageFile, prepareAddress } from '../../../common/functions';
-
-interface keyStringAny {
-  [key: string]: any;
-}
 
 const Profile: NextPage = () => {
   const [showPopupPassword, setShowPopupPassword] = useState(false);
@@ -212,7 +207,7 @@ const Profile: NextPage = () => {
       <Head>
         <title>Profile</title>
       </Head>
-      <Card header={header} className="mx-auto my-5">
+      <Card header={header} className="!border-none !rounded-none mx-auto my-5">
         <UserInfo
           inputs={inputs}
           inputsError={inputsError}

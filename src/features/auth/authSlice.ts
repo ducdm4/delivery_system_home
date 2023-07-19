@@ -14,6 +14,7 @@ export interface AuthState {
     dob: string;
     gender: boolean;
     phone: string;
+    profileImage: string;
     profilePicture: KeyValue;
     address: KeyValue;
   };
@@ -31,6 +32,7 @@ const initialState: AuthState = {
     gender: true,
     phone: '',
     profilePicture: {},
+    profileImage: '',
     address: {},
   },
 };

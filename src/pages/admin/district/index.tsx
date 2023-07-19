@@ -125,7 +125,7 @@ const DistrictList: NextPage = () => {
     const tdClasses = 'p-4 border-b border-blue-gray-50';
     return (
       <>
-        {data.map((row, index: number) => (
+        {data?.map((row, index: number) => (
           <tr key={index}>
             <td className={tdClasses}>{row.name}</td>
             <td className={tdClasses}>{row.slug}</td>
@@ -170,7 +170,7 @@ const DistrictList: NextPage = () => {
               url: '/admin/district/add',
             },
           })}
-          className="mx-auto my-5 table-list"
+          className="!border-none !rounded-none mx-auto my-5 table-list"
         >
           <TableList
             ref={tableListElement}

@@ -144,7 +144,7 @@ function StationBasicInfo({
           <p className={'text-sm text-red-600'}>{errors.parentStation}</p>
         </div>
       </div>
-      <div className={'flex-row flex gap-8 mt-4 mb-4'}>
+      <div className={'flex-row flex gap-8 mt-8 mb-4'}>
         <div className={'w-full'}>
           <span className="p-float-label">
             <MultiSelect

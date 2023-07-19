@@ -5,6 +5,7 @@ interface Props {
   pagingInfo: {
     currentPage: number;
     totalPage: number;
+    total: number;
   };
   loadingStatus: string;
   handleChangePage: Function;
@@ -17,9 +18,12 @@ const BasicTablePagination = ({
 }: Props) => {
   return (
     <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-      <p className="text-sm">
-        Page {pagingInfo.currentPage} of {pagingInfo.totalPage}
-      </p>
+      <div>
+        <p className="text-sm">
+          Page {pagingInfo.currentPage} of {pagingInfo.totalPage}
+        </p>
+        <p className="text-sm">Total {pagingInfo.total} record(s)</p>
+      </div>
       <div className="flex gap-2">
         <Button
           disabled={pagingInfo.currentPage === 1 || loadingStatus === 'loading'}

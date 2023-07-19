@@ -40,6 +40,11 @@ const StationList: NextPage = () => {
         key: 'address',
       },
       {
+        label: 'Parent station',
+        key: 'parentStation',
+        isSort: true,
+      },
+      {
         label: '',
         key: '',
       },
@@ -142,9 +147,14 @@ const StationList: NextPage = () => {
             <tr key={index}>
               <td className={tdClasses}>{row.name}</td>
               <td className={tdClasses}>{STATION_TYPE[row.type].name}</td>
-              <td
-                className={tdClasses}
-              >{`${row.address_detail} ${row.streetName}, ${row.wardName}, ${row.districtName}, ${row.cityName}`}</td>
+              <td className={tdClasses}>{`${row.address_detail} ${
+                row.streetName || ''
+              }, ${row.wardName || ''}, ${row.districtName || ''}, ${
+                row.cityName || ''
+              }`}</td>
+              <td className={tdClasses}>
+                {row.parentStationName || 'Not Available'}
+              </td>
               <td className={tdClasses}>
                 <Button
                   icon="pi pi-pencil"
@@ -186,7 +196,7 @@ const StationList: NextPage = () => {
               url: '/admin/station/add',
             },
           })}
-          className="mx-auto my-5 table-list"
+          className="!border-none !rounded-none mx-auto my-5 table-list"
         >
           <TableList
             ref={tableListElement}

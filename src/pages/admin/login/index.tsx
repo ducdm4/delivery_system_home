@@ -7,6 +7,7 @@ import Head from 'next/head';
 import { ValidateEmail } from '../../../common/functions';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { getUserProfilePicture } from '../../../features/photo/photoSlice';
 
 const LoginPage: NextPage = () => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,13 @@ const LoginPage: NextPage = () => {
           userLogin({ ...inputs, role: 1 }),
         ).unwrap();
         if (result.isSuccess) {
+          if (result.data.user.profilePicture) {
+            await dispatch(
+              getUserProfilePicture({
+                id: result.data.user.profilePicture.id,
+              }),
+            ).unwrap();
+          }
           await router.push('/admin');
         }
       } catch (e) {}

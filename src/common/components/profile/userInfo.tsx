@@ -57,6 +57,7 @@ const UserInfo = ({
         inputs={inputs}
         handleChange={handleInputChanged}
         setInputByValue={setInput}
+        inputsError={inputsError}
       />
       <Divider align="center" className={'!mt-10'}>
         <span className="text-xl font-bold text-green-700">ADDRESS INFO</span>

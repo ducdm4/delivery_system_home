@@ -234,7 +234,10 @@ const DetailWard: NextPage = () => {
         <ProgressSpinner className="h-12 w-12 absolute top-[100px] left-[calc(50%-50px)] z-20" />
       )}
       {loadingStatus === 'idle' && (
-        <Card header={header} className="mx-auto my-5">
+        <Card
+          header={header}
+          className="!border-none !rounded-none mx-auto my-5"
+        >
           <div>
             <div className={'flex-row flex gap-8'}>
               <div className={'basis-1/2'}>

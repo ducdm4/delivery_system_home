@@ -63,8 +63,8 @@ export function setInputByValue(key: string, val: any, setInputs: Function) {
 export function validateImageFile(image: File) {
   let check = true;
   let error = '';
-  if (image.size > 2048000) {
-    error = 'Image must smaller than 2mb';
+  if (image.size > 1024000) {
+    error = 'Image must smaller than 1mb';
     check = false;
   } else if (imageType.findIndex((x) => x === image.type) < 0) {
     error = 'Please select an image';
@@ -107,4 +107,41 @@ export function validateAddress(address: KeyValue) {
     error.detail = 'Please input address detail';
   }
   return error;
+}
+
+export function processSelectedImage(
+  e: ChangeEvent<HTMLInputElement>,
+  callback: Function,
+) {
+  if (e.target.files && e.target.files.length) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      callback(reader.result as string);
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
+  }
+}
+
+export function validateRequired(input: string | object, key: string) {
+  if (
+    (typeof input === 'string' && input === '') ||
+    (typeof input === 'object' && !Object.keys(input).length)
+  ) {
+    return `Please input ${key}`;
+  }
+  return '';
+}
+
+export function validateEmailText(input: string) {
+  let message = validateRequired(input, 'email');
+  if (!message) {
+    if (!ValidateEmail(input)) {
+      message = 'Wrong email format';
+    }
+  }
+  return message;
 }

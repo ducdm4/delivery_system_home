@@ -33,6 +33,7 @@ import {
   getPhotoInfo,
 } from '../../../features/photo/photoSlice';
 import { STATION_TYPE } from '../../../common/config/constant';
+import BasicEditHeader from '../../../common/components/default/masterData/basicEditHeader';
 
 const UpdateStation: NextPage = () => {
   const dispatch = useAppDispatch();
@@ -41,7 +42,6 @@ const UpdateStation: NextPage = () => {
 
   const keyStringAnyObj: KeyValue = {};
 
-  const [imageKey, setImageKey] = useState(0);
   const initInput: KeyValue = {
     type: { id: 0, name: 'Ward station' },
     name: '',
@@ -79,6 +79,7 @@ const UpdateStation: NextPage = () => {
   ) => {
     handleChangeSelect(val, key, inputs, setInputs);
   };
+  const [isEdit, setIsEdit] = useState(false);
 
   function handleInputChanged(e: ChangeEvent<HTMLInputElement>) {
     handleChange(e, inputs, setInputs);
@@ -215,6 +216,7 @@ const UpdateStation: NextPage = () => {
             autoClose: 2000,
             type: 'success',
           });
+          router.push('/admin/station');
         }
       });
     }
@@ -262,38 +264,21 @@ const UpdateStation: NextPage = () => {
     return check;
   }
 
-  function header() {
+  const header = () => {
     return (
-      <div className="rounded-none p-4">
-        <div className="flex items-center justify-between gap-8">
-          <div>
-            <p className={'text-xl font-bold'}>Station</p>
-            <p className={'text-sm'}>Update station info</p>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button
-              className="flex items-center gap-3"
-              severity="success"
-              size="small"
-              onClick={handleSubmit}
-            >
-              {stationLoadingStatus === 'loading' ? (
-                <ProgressSpinner
-                  style={{ width: '22px', height: '22px' }}
-                  strokeWidth="8"
-                  animationDuration="2s"
-                />
-              ) : (
-                <>
-                  <PaperAirplaneIcon strokeWidth={2} className="h-4 w-4" />
-                  Submit
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
+      <BasicEditHeader
+        isEdit={isEdit}
+        titleAdd={{ big: `Add Station`, small: `Add a new Station` }}
+        titleEdit={{ big: `Edit Station`, small: `Edit a station information` }}
+        handleSubmit={handleSubmit}
+        resetInput={resetInput}
+        url={`/admin/station`}
+      />
     );
+  };
+
+  function resetInput() {
+    setInputs(initInput);
   }
 
   return (
@@ -301,7 +286,7 @@ const UpdateStation: NextPage = () => {
       <Head>
         <title>Station Info</title>
       </Head>
-      <Card header={header} className="mx-auto my-5">
+      <Card header={header} className="!border-none !rounded-none mx-auto my-5">
         <Divider align="center" className={''}>
           <span className="text-xl font-bold text-green-700">IMAGE INFO</span>
         </Divider>

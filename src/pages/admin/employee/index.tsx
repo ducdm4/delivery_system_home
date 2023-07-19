@@ -7,47 +7,41 @@ import {
   TableListRefObject,
 } from '../../../common/config/interfaces';
 import { useRouter } from 'next/router';
-import {
-  deleteStreetThunk,
-  getStreetListFilter,
-  streetLoading,
-} from '../../../features/street/streetSlice';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks';
 import DialogConfirm from '../../../common/components/default/dialogConfirm';
 import { toast } from 'react-toastify';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import BasicListHeader from '../../../common/components/default/masterData/basicListHeader';
-import { getDistrictListFilter } from '../../../features/district/districtSlice';
-import { getWardListFilter } from '../../../features/ward/wardSlice';
+import {
+  deleteEmployeeThunk,
+  employeeLoading,
+  getListEmployeeFilter,
+} from '../../../features/employee/employeeSlice';
+import { getStationListFilter } from '../../../features/station/stationSlice';
+import { employeeRoleList } from '../../../common/config/constant';
 
-const WardList: NextPage = () => {
+const EmployeeList: NextPage = () => {
   const [tableConfig, setTableConfig] = useState({
-    url: '/street',
+    url: '/employee',
     header: [
       {
-        label: 'Name',
+        label: 'Full name',
         key: 'name',
         isSort: true,
       },
       {
-        label: 'Search name',
-        key: 'slug',
-      },
-      {
-        label: 'Ward',
-        key: 'ward',
+        label: 'Role',
+        key: 'role',
         isSort: true,
       },
       {
-        label: 'District',
-        key: 'district',
-        isSort: true,
+        label: 'Station',
+        key: 'stationName',
       },
       {
-        label: 'City',
-        key: 'city',
-        isSort: true,
+        label: 'Verified',
+        key: 'verified',
       },
       {
         label: '',
@@ -56,28 +50,41 @@ const WardList: NextPage = () => {
     ],
     filters: [
       {
-        key: 'ward',
-        label: 'Ward',
+        key: 'role',
+        label: 'Role',
+        data: employeeRoleList,
+      },
+      {
+        key: 'isVerified',
+        label: 'Verified',
+        data: [
+          { id: 1, name: 'Yes' },
+          { id: 0, name: 'No' },
+        ],
+      },
+      {
+        key: 'station',
+        label: 'Station',
         data: [],
       },
     ],
   });
   const [isShowDeleteDialog, setIsShowDeleteDialog] = useState(false);
-  const [currentStreetDelete, setCurrentStreetDelete] = useState({
+  const [currentEmployeeDelete, setCurrentEmployeeDelete] = useState({
     id: -1,
     name: '',
   });
-  const streetLoadingStatus = useAppSelector(streetLoading);
+  const employeeLoadingStatus = useAppSelector(employeeLoading);
   const tableListElement = useRef<TableListRefObject>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   async function goToEdit(id: number) {
-    await router.push(`/admin/street/${id}`);
+    await router.push(`/admin/employee/${id}`);
   }
 
   async function getData(query = '') {
-    const res = await dispatch(getStreetListFilter({ query })).unwrap();
+    const res = await dispatch(getListEmployeeFilter({ query })).unwrap();
     if (res.isSuccess) {
       return res.data;
     } else {
@@ -85,17 +92,17 @@ const WardList: NextPage = () => {
     }
   }
 
-  function confirmDeleteStreet(id: number, name: string) {
-    setCurrentStreetDelete({
+  function confirmDeleteEmployee(id: number, name: string) {
+    setCurrentEmployeeDelete({
       id,
       name,
     });
     setIsShowDeleteDialog(true);
   }
 
-  function deleteStreet() {
+  function deleteEmployee() {
     const res = dispatch(
-      deleteStreetThunk({ id: currentStreetDelete.id }),
+      deleteEmployeeThunk({ id: currentEmployeeDelete.id }),
     ).unwrap();
     res.then((successData) => {
       if (successData.isSuccess) {
@@ -107,54 +114,60 @@ const WardList: NextPage = () => {
         if (tableListElement.current) {
           tableListElement.current.handleSearch();
         }
-        refusedDeleteStreet();
+        refusedDeleteEmployee();
       }
     });
   }
 
-  function refusedDeleteStreet() {
+  function refusedDeleteEmployee() {
     setIsShowDeleteDialog(false);
-    setCurrentStreetDelete({
+    setCurrentEmployeeDelete({
       id: -1,
       name: '',
     });
   }
 
   useEffect(() => {
-    const getWard = dispatch(getWardListFilter({ query: '' })).unwrap();
-    getWard.then((listWard) => {
-      setTableConfig((old) => {
-        const indexWard = old.filters.findIndex((x) => x.key === 'ward');
-        const newVal = old;
-        newVal.filters[indexWard].data = listWard.data.list.map(
-          (ward: {
-            id: number;
-            name: string;
-            districtName: string;
-            cityName: string;
-          }) => {
-            return {
-              id: ward.id,
-              name: `${ward.name}, ${ward.districtName}, ${ward.cityName}`,
-            };
-          },
+    const getListStation = dispatch(
+      getStationListFilter({ query: '' }),
+    ).unwrap();
+    getListStation.then((res) => {
+      if (res.isSuccess) {
+        const indexStation = tableConfig.filters.findIndex(
+          (x) => x.key === 'station',
         );
-        return newVal;
-      });
+        if (indexStation) {
+          setTableConfig((old) => {
+            const filters = old.filters;
+            filters[indexStation].data = res.data.list;
+            return {
+              ...old,
+              filters,
+            };
+          });
+        }
+      }
     });
   }, []);
+
+  const roleDetail = (id: number) => {
+    const role = employeeRoleList.find((x) => x.id === id);
+    if (role) {
+      return role.name;
+    }
+    return '';
+  };
 
   function rowList(data: Array<KeyValue>) {
     const tdClasses = 'p-4 border-b border-blue-gray-50';
     return (
       <>
-        {data.map((row, index: number) => (
+        {data?.map((row, index: number) => (
           <tr key={index}>
-            <td className={tdClasses}>{row.name}</td>
-            <td className={tdClasses}>{row.slug}</td>
-            <td className={tdClasses}>{row.wardName}</td>
-            <td className={tdClasses}>{row.districtName}</td>
-            <td className={tdClasses}>{row.cityName}</td>
+            <td className={tdClasses}>{`${row.firstName} ${row.lastName}`}</td>
+            <td className={tdClasses}>{roleDetail(row.role)}</td>
+            <td className={tdClasses}>{row.stationName}</td>
+            <td className={tdClasses}>{row.isVerified ? 'Yes' : 'No'}</td>
             <td className={tdClasses}>
               <Button
                 icon="pi pi-pencil"
@@ -166,7 +179,7 @@ const WardList: NextPage = () => {
               />
               <Button
                 icon="pi pi-trash"
-                onClick={() => confirmDeleteStreet(row.id, row.name)}
+                onClick={() => confirmDeleteEmployee(row.id, row.name)}
                 rounded
                 aria-label="Filter"
                 size="small"
@@ -183,16 +196,16 @@ const WardList: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Street management</title>
+        <title>Employee management</title>
       </Head>
       <div>
         <Card
           header={BasicListHeader({
-            title: 'Street list',
-            smallTitle: 'See information about all street',
+            title: 'Employee list',
+            smallTitle: 'See information about all district',
             addButton: {
-              label: 'Add street',
-              url: '/admin/street/add',
+              label: 'Add employee',
+              url: '/admin/employee/add',
             },
           })}
           className="!border-none !rounded-none mx-auto my-5 table-list"
@@ -202,20 +215,20 @@ const WardList: NextPage = () => {
             tableConfig={tableConfig}
             rowList={rowList}
             getData={getData}
-            loadingStatus={streetLoadingStatus}
+            loadingStatus={employeeLoadingStatus}
           />
         </Card>
       </div>
 
       <DialogConfirm
         isShow={isShowDeleteDialog}
-        title={'Delete ward'}
-        body={'Do you want to delete this Ward?'}
-        refusedCallback={refusedDeleteStreet}
-        acceptedCallback={deleteStreet}
+        title={'Delete district'}
+        body={'Do you want to delete this Employee?'}
+        refusedCallback={refusedDeleteEmployee}
+        acceptedCallback={deleteEmployee}
       ></DialogConfirm>
     </>
   );
 };
 
-export default WardList;
+export default EmployeeList;

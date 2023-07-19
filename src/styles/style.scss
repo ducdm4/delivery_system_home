@@ -4,7 +4,6 @@
 
 .p-menubar {
   background: rgb(253, 230, 18) !important;
-  padding: 1rem 2rem !important;
 }
 .custom-file-input {
   color: transparent;
@@ -14,6 +13,9 @@
 }
 .custom-file-input-2::before {
   content: "Select image" !important;
+}
+.custom-file-text-select-identity::before {
+  content: "Upload identity card image" !important;
 }
 .custom-file-input::before {
   content: "Select profile image";
