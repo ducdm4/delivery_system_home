@@ -18,7 +18,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "next": "latest",
     "primeicons": "^6.0.1",
-    "primereact": "^9.5.0",
+    "primereact": "^9.6.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^7.2.0",
