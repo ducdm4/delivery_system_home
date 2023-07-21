@@ -48,10 +48,6 @@ const EmployeeInfo = ({
     });
   };
 
-  useEffect(() => {
-    console.log('errorserrors', errors);
-  }, [errors]);
-
   return (
     <>
       <div className={'flex-row flex gap-8 mt-8'}>
@@ -61,6 +57,7 @@ const EmployeeInfo = ({
               value={inputs.role}
               onChange={(e) => setInputByValue('role', e.value, setInputs)}
               options={employeeRoleList}
+              filter
               optionLabel="name"
               placeholder="Select employee role"
               className={'w-full p-inputtext-sm'}
@@ -75,6 +72,7 @@ const EmployeeInfo = ({
             <Dropdown
               value={inputs.station}
               onChange={(e) => setInputByValue('station', e.value, setInputs)}
+              filter
               options={stationListReduced()}
               optionLabel="name"
               placeholder="Select station"
@@ -84,7 +82,7 @@ const EmployeeInfo = ({
             />
             <label htmlFor="type">Station</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.station}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.station}</p>
         </div>
         <div className={'basis-1/3 flex items-center justify-start'}>
           <Checkbox
@@ -117,7 +115,7 @@ const EmployeeInfo = ({
               type="file"
               onChange={(e) => onSelectedImage(e, 'identityCardImage1')}
             />
-            <p className={'text-sm text-red-600'}>{errors.image1}</p>
+            <p className={'text-xs mt-1 text-red-300'}>{errors.image1}</p>
             <img src={inputs.identityCardImage1.render} width="70%" />
           </div>
         </div>
@@ -138,7 +136,7 @@ const EmployeeInfo = ({
               type="file"
               onChange={(e) => onSelectedImage(e, 'identityCardImage2')}
             />
-            <p className={'text-sm text-red-600'}>{errors.image2}</p>
+            <p className={'text-xs mt-1 text-red-300'}>{errors.image2}</p>
             <img src={inputs.identityCardImage2.render} width="70%" />
           </div>
         </div>

@@ -100,7 +100,6 @@ const DetailEmployee: NextPage = () => {
         getStationListFilter({ query: '' }),
       ).unwrap();
       promiseList.push(getListStation);
-      console.log('id', router.query.id);
       if (router.query.id !== 'add') {
         const id = parseInt(router.query.id as string);
         if (!isNaN(id)) {
@@ -185,7 +184,6 @@ const DetailEmployee: NextPage = () => {
   }, [router.query.id]);
 
   async function handleSubmit() {
-    console.log('ducdm');
     if (validate()) {
       await handleUploadImage();
       const dataToSend: KeyValue = {
@@ -304,7 +302,6 @@ const DetailEmployee: NextPage = () => {
       }
     }
     setInputErrors(errors);
-    console.log('errors', errors);
     return check;
   }
 

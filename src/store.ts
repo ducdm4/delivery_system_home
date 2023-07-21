@@ -10,6 +10,7 @@ import photoReducer from './features/photo/photoSlice';
 import streetReducer from './features/street/streetSlice';
 import stationReducer from './features/station/stationSlice';
 import employeeReducer from './features/employee/employeeSlice';
+import routeReducer from './features/route/routeSlice';
 
 export function makeStore() {
   return configureStore({
@@ -24,6 +25,7 @@ export function makeStore() {
       street: streetReducer,
       station: stationReducer,
       employee: employeeReducer,
+      route: routeReducer,
     },
   });
 }

@@ -89,6 +89,7 @@ const BasicListFilter = ({
               onChange={(e) => handleChangeFilter(e.value, index)}
               options={filterItem.data}
               optionLabel="name"
+              filter
               className={'w-full p-inputtext-sm'}
               placeholder={filterItem.label}
               name={filterItem.key}

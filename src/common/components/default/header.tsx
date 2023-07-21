@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Menubar } from 'primereact/menubar';
 import { useRouter } from 'next/router';
 import { Avatar } from 'primereact/avatar';
 import { useAppSelector } from '../../hooks';
-import { userLoggedIn } from '../../../features/auth/authSlice';
+import { logout, userLoggedIn } from '../../../features/auth/authSlice';
 import { profileImageState } from '../../../features/photo/photoSlice';
+import { Button } from 'primereact/button';
+import { Badge } from 'primereact/badge';
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { useDispatch } from 'react-redux';
 
 export default function Header() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const userInfo = useAppSelector(userLoggedIn);
   const userProfileImage = useAppSelector(profileImageState);
 
@@ -45,6 +50,9 @@ export default function Header() {
         },
         {
           label: 'Route config',
+          command: () => {
+            router.push('/admin/route');
+          },
         },
         {
           label: 'Master config',
@@ -90,20 +98,32 @@ export default function Header() {
           },
         },
         {
-          label: 'Notifications',
-        },
-        {
           label: 'Logout',
+          command: () => {
+            doLogout();
+          },
         },
       ],
     },
   ];
 
+  function doLogout() {
+    dispatch(logout());
+    router.push('/admin/login');
+  }
+
   const start = (
     <p className={'font-bold text-xl text-gray-700 pr-5'}>Delivery System</p>
   );
+
   const end = (
     <div className={'flex items-center '}>
+      <i
+        className="pi pi-bell p-overlay-badge mr-6"
+        style={{ fontSize: '1.5rem' }}
+      >
+        <Badge value="2"></Badge>
+      </i>
       <Avatar className={'lg:!w-[3.5rem] lg:!h-[3.5rem]'} shape="circle">
         <img className={'object-cover'} src={userProfileImage} />
       </Avatar>

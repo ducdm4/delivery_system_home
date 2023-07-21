@@ -16,40 +16,38 @@ import { getUserProfilePicture } from '../../../features/photo/photoSlice';
 export default function Layout({ children }: PropsWithChildren) {
   const userInfo = useAppSelector(userLoggedIn);
   const dispatch = useAppDispatch();
-  const [isShowHeader, setIsShowHeader] = useState(true);
+  const [isShowHeader, setIsShowHeader] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
   const router = useRouter();
+  const isAdminPage = router.pathname.split('/').indexOf('admin') > -1;
 
   if (typeof window !== 'undefined') {
     useLayoutEffect(() => {
-      if (router.pathname.split('/').indexOf('login') === -1) {
-        const verifyUser = async () => {
+      if (isAdminPage) {
+        if (router.pathname.split('/').indexOf('login') === -1) {
           const token = localStorage.getItem(
             process.env.NEXT_PUBLIC_API_KEY || 'DSAccessToken',
           );
           if (token && !userInfo.id) {
-            try {
-              const verify = await dispatch(verifyUserLogin()).unwrap();
-              if (verify.isSuccess) {
+            const verify = dispatch(verifyUserLogin()).unwrap();
+            verify.then((res) => {
+              if (res.isSuccess) {
                 setIsVerified(true);
-                if (verify.data.user.profilePicture) {
-                  await dispatch(
+                if (res.data.user.profilePicture) {
+                  const getUserProfileImage = dispatch(
                     getUserProfilePicture({
-                      id: verify.data.user.profilePicture.id,
+                      id: res.data.user.profilePicture.id,
                     }),
                   ).unwrap();
+                  getUserProfileImage.then();
                 }
               }
-            } catch (e) {}
+            });
+          } else if (!token) {
+            router.push('/');
           }
-        };
-        checkShowHeader();
-        if (isShowHeader) {
-          verifyUser();
         }
-      } else {
-        setIsVerified(true);
       }
     }, []);
   }
@@ -62,13 +60,15 @@ export default function Layout({ children }: PropsWithChildren) {
   }, [router.pathname]);
 
   const checkShowHeader = () => {
-    setIsShowHeader(router.pathname.split('/').indexOf('login') === -1);
+    setIsShowHeader(
+      isAdminPage && router.pathname.split('/').indexOf('login') === -1,
+    );
   };
 
   return (
     <>
       <main className={'bg-gray-100'}>
-        {isShowHeader && <Header />}
+        {isVerified && isShowHeader && <Header />}
         <div className={'flex'}>
           <div
             className={

@@ -7,7 +7,7 @@ import ProfileImageInfo from '../../../common/components/profile/imageInfo';
 import { KeyValue } from '../../config/interfaces';
 import {
   handleChange,
-  handleChangeSelect,
+  handleChangeAddressProp,
   setInputByValue,
 } from '../../functions';
 
@@ -30,7 +30,7 @@ const UserInfo = ({
     val: { id: number; name: string },
     key: string,
   ) => {
-    handleChangeSelect(val, key, inputs, setInputs);
+    handleChangeAddressProp(val, key, inputs, setInputs);
   };
 
   function handleInputChanged(e: ChangeEvent<HTMLInputElement>) {
@@ -64,7 +64,7 @@ const UserInfo = ({
       </Divider>
       <ProfileAddressInfo
         inputs={inputs}
-        handleChangeSelect={handleSelectChanged}
+        handleChangeAddressProp={handleSelectChanged}
         handleChange={handleInputChanged}
       />
     </div>

@@ -5,6 +5,7 @@ import {
   getStreetById,
   editStreetById,
   deleteStreetById,
+  getStreetNotInRouteAPI,
 } from './streetAPI';
 import { KeyValue } from '../../common/config/interfaces';
 import { AppState } from '../../store';
@@ -52,6 +53,13 @@ export const deleteStreetThunk = createAsyncThunk(
   },
 );
 
+export const getStreetNotInRoute = createAsyncThunk(
+  'street/getStreetNotInRoute',
+  async (data: KeyValue) => {
+    return await getStreetNotInRouteAPI(data);
+  },
+);
+
 export const StreetSlice = createSlice({
   name: 'street',
   initialState,
@@ -78,6 +86,14 @@ export const StreetSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(getStreetListFilter.fulfilled, (state, action) => {
+        state.status = 'idle';
+      });
+
+    builder
+      .addCase(getStreetNotInRoute.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getStreetNotInRoute.fulfilled, (state, action) => {
         state.status = 'idle';
       });
   },

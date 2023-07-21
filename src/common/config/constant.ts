@@ -7,6 +7,11 @@ export const employeeRoleList = [
   { id: 4, name: 'Shipper' },
 ];
 
+export const routeTypeList = [
+  { id: 0, name: 'Pickup' },
+  { id: 1, name: 'Delivery' },
+];
+
 export enum ROLE_LIST {
   ADMIN = 1,
   OPERATOR = 2,

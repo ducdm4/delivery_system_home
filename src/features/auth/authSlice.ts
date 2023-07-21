@@ -60,7 +60,14 @@ export const getLoggedInProfile = createAsyncThunk(
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    logout(state) {
+      state.user = {};
+      localStorage.removeItem(
+        process.env.NEXT_PUBLIC_API_KEY || 'DSAccessToken',
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(userLogin.pending, (state) => {
@@ -107,7 +114,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const {} = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;
 
 export const userLoggedIn = (state: AppState) => state.auth.user;

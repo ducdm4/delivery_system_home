@@ -28,9 +28,6 @@ function StationImageList({ inputs, setInputs }: Props) {
           };
         });
       };
-      reader.onerror = function (error) {
-        console.log('Error: ', error);
-      };
     }
   }
 

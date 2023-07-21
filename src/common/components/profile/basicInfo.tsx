@@ -40,7 +40,7 @@ const ProfileBasicInfo = ({
             />
             <label htmlFor="wardname">Email</label>
           </span>
-          <p className={'text-sm text-red-600'}>{inputsError.email}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{inputsError.email}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -53,7 +53,7 @@ const ProfileBasicInfo = ({
             />
             <label htmlFor="firstname">First name</label>
           </span>
-          <p className={'text-sm text-red-600'}>{inputsError.firstName}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{inputsError.firstName}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -66,7 +66,7 @@ const ProfileBasicInfo = ({
             />
             <label htmlFor="lastname">Last name</label>
           </span>
-          <p className={'text-sm text-red-600'}>{inputsError.lastName}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{inputsError.lastName}</p>
         </div>
       </div>
       <div className={'flex-row flex gap-8 mt-8'}>
@@ -95,7 +95,7 @@ const ProfileBasicInfo = ({
             />
             <label htmlFor="phone">Phone number</label>
           </span>
-          <p className={'text-sm text-red-600'}>{inputsError.phone}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{inputsError.phone}</p>
         </div>
         <div className={'basis-1/3'}>
           <div className={'basis-1/3'}>
@@ -105,6 +105,9 @@ const ProfileBasicInfo = ({
               className={'w-full'}
               options={genderOption}
               optionLabel="name"
+              pt={{
+                button: { className: '!p-[0.55rem]' },
+              }}
             />
           </div>
         </div>

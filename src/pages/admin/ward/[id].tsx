@@ -176,7 +176,7 @@ const DetailWard: NextPage = () => {
     }
   }
 
-  const handleChangeSelect = (
+  const handleChangeAddressProp = (
     val: { id: number; name: string },
     key: string,
   ) => {
@@ -276,7 +276,8 @@ const DetailWard: NextPage = () => {
                 <span className="p-float-label">
                   <Dropdown
                     value={inputs.city}
-                    onChange={(e) => handleChangeSelect(e.value, 'city')}
+                    onChange={(e) => handleChangeAddressProp(e.value, 'city')}
+                    filter
                     options={cityList}
                     optionLabel="name"
                     placeholder="Select a City"
@@ -291,7 +292,10 @@ const DetailWard: NextPage = () => {
                 <span className="p-float-label">
                   <Dropdown
                     value={inputs.district}
-                    onChange={(e) => handleChangeSelect(e.value, 'district')}
+                    onChange={(e) =>
+                      handleChangeAddressProp(e.value, 'district')
+                    }
+                    filter
                     options={districtListFiltered}
                     optionLabel="name"
                     placeholder="Select a City"

@@ -19,7 +19,7 @@ import { KeyValue } from '../../../common/config/interfaces';
 import { useRouter } from 'next/router';
 import {
   handleChange,
-  handleChangeSelect,
+  handleChangeAddressProp,
   prepareAddress,
   setInputByValue,
   validateAddress,
@@ -77,7 +77,7 @@ const UpdateStation: NextPage = () => {
     val: { id: number; name: string },
     key: string,
   ) => {
-    handleChangeSelect(val, key, inputs, setInputs);
+    handleChangeAddressProp(val, key, inputs, setInputs);
   };
   const [isEdit, setIsEdit] = useState(false);
 
@@ -307,7 +307,7 @@ const UpdateStation: NextPage = () => {
         <AddressInfo
           inputs={inputs}
           errors={errors.address}
-          handleChangeSelect={handleSelectChanged}
+          handleChangeAddressProp={handleSelectChanged}
           handleChange={handleInputChanged}
         />
       </Card>

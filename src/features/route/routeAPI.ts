@@ -1,10 +1,10 @@
 import { useAPI } from '../../common/hooks/useAPI';
 import { KeyValue } from '../../common/config/interfaces';
 
-export const addNewStreet = async (data: KeyValue) => {
+export const addNewRoute = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: 'streets',
+      url: 'routes',
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -16,10 +16,10 @@ export const addNewStreet = async (data: KeyValue) => {
   return response;
 };
 
-export const getStreetById = async (data: KeyValue) => {
+export const getRouteById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `streets/${data.id}`,
+      url: `routes/${data.id}`,
       method: 'GET',
     },
     true,
@@ -27,10 +27,10 @@ export const getStreetById = async (data: KeyValue) => {
   return response;
 };
 
-export const editStreetById = async (data: KeyValue) => {
+export const editRouteById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `streets/${data.id}`,
+      url: `routes/${data.id}`,
       method: 'PUT',
       header: {
         'Content-Type': 'application/json',
@@ -42,10 +42,10 @@ export const editStreetById = async (data: KeyValue) => {
   return response;
 };
 
-export const getStreetNotInRouteAPI = async (data: KeyValue) => {
+export const getAllRoutesFilter = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `streets/streetsNotInAnyRoute/${data.station}/${data.type}`,
+      url: `routes${data.query}`,
       method: 'GET',
     },
     true,
@@ -53,21 +53,10 @@ export const getStreetNotInRouteAPI = async (data: KeyValue) => {
   return response;
 };
 
-export const getAllStreetsFilter = async (data: KeyValue) => {
+export const deleteRouteById = async (data: KeyValue) => {
   const response = await useAPI(
     {
-      url: `streets${data.query}`,
-      method: 'GET',
-    },
-    true,
-  );
-  return response;
-};
-
-export const deleteStreetById = async (data: KeyValue) => {
-  const response = await useAPI(
-    {
-      url: `streets/${data.id}`,
+      url: `routes/${data.id}`,
       method: 'DELETE',
     },
     true,

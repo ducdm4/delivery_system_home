@@ -19,7 +19,7 @@ interface keyStringValue {
 interface Props {
   inputs: keyStringValue;
   errors?: keyStringValue;
-  handleChangeSelect: Function;
+  handleChangeAddressProp: Function;
   handleChange: Function;
 }
 
@@ -34,7 +34,7 @@ interface CityDistrictWardItem {
 const ProfileAddressInfo = ({
   inputs,
   errors = {},
-  handleChangeSelect,
+  handleChangeAddressProp,
   handleChange,
 }: Props) => {
   const dispatch = useAppDispatch();
@@ -127,8 +127,9 @@ const ProfileAddressInfo = ({
           <span className="p-float-label">
             <Dropdown
               value={inputs.address.city}
-              onChange={(e) => handleChangeSelect(e.value, 'city')}
+              onChange={(e) => handleChangeAddressProp(e.value, 'city')}
               options={cityList}
+              filter
               optionLabel="name"
               placeholder="Select a City"
               className={'w-full p-inputtext-sm'}
@@ -137,14 +138,15 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="city">City</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.city}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.city}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
             <Dropdown
               value={inputs.address.district}
-              onChange={(e) => handleChangeSelect(e.value, 'district')}
+              onChange={(e) => handleChangeAddressProp(e.value, 'district')}
               options={districtListFiltered()}
+              filter
               optionLabel="name"
               placeholder="Select a District"
               className={'w-full p-inputtext-sm'}
@@ -153,14 +155,15 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="city">District</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.district}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.district}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
             <Dropdown
               value={inputs.address.ward}
-              onChange={(e) => handleChangeSelect(e.value, 'ward')}
+              onChange={(e) => handleChangeAddressProp(e.value, 'ward')}
               options={wardListFiltered()}
+              filter
               optionLabel="name"
               placeholder="Select a Ward"
               className={'w-full p-inputtext-sm'}
@@ -169,7 +172,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="ward">Ward</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.ward}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.ward}</p>
         </div>
       </div>
       <div className={'flex-row flex gap-8 mt-8'}>
@@ -177,9 +180,10 @@ const ProfileAddressInfo = ({
           <span className="p-float-label">
             <Dropdown
               value={inputs.address.street}
-              onChange={(e) => handleChangeSelect(e.value, 'street')}
+              onChange={(e) => handleChangeAddressProp(e.value, 'street')}
               options={streetListFiltered()}
               optionLabel="name"
+              filter
               placeholder="Select a Street"
               className={'w-full p-inputtext-sm'}
               name="street"
@@ -187,7 +191,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="street">Street</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.street}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.street}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -200,7 +204,7 @@ const ProfileAddressInfo = ({
             />
             <label htmlFor="detail">Detail</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.detail}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.detail}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">

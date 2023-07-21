@@ -10,7 +10,7 @@ export const ValidateEmail = (email: string) => {
     );
 };
 
-export const handleChangeSelect = (
+export const handleChangeAddressProp = (
   val: { id: number; name: string },
   key: string,
   inputs: KeyValue,
@@ -120,9 +120,6 @@ export function processSelectedImage(
     reader.onload = () => {
       callback(reader.result as string);
     };
-    reader.onerror = function (error) {
-      console.log('Error: ', error);
-    };
   }
 }
 
@@ -131,6 +128,16 @@ export function validateRequired(input: string | object, key: string) {
     (typeof input === 'string' && input === '') ||
     (typeof input === 'object' && !Object.keys(input).length)
   ) {
+    return `Please input ${key}`;
+  }
+  return '';
+}
+
+export function validateArrayRequired(
+  inputArray: Array<KeyValue>,
+  key: string,
+) {
+  if (inputArray.length === 0) {
     return `Please input ${key}`;
   }
   return '';

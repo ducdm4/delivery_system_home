@@ -110,7 +110,7 @@ function StationBasicInfo({
             />
             <label htmlFor="wardname">Station Name</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.name}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.name}</p>
         </div>
         <div className={'basis-1/3'}>
           <span className="p-float-label">
@@ -118,6 +118,7 @@ function StationBasicInfo({
               value={inputs.type}
               onChange={(e) => didChangeType(e.value)}
               options={stationTypeList()}
+              filter
               optionLabel="name"
               placeholder="Select station type"
               className={'w-full p-inputtext-sm'}
@@ -134,6 +135,7 @@ function StationBasicInfo({
               onChange={(e) => setInput('parentStation', e.value)}
               options={stationListReduced()}
               optionLabel="name"
+              filter
               placeholder="Select parent station"
               className={'w-full p-inputtext-sm'}
               name="parentStation"
@@ -141,7 +143,7 @@ function StationBasicInfo({
             />
             <label htmlFor="ward">Parent station</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.parentStation}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.parentStation}</p>
         </div>
       </div>
       <div className={'flex-row flex gap-8 mt-8 mb-4'}>
@@ -159,7 +161,7 @@ function StationBasicInfo({
             />
             <label htmlFor="ward">Wards under management</label>
           </span>
-          <p className={'text-sm text-red-600'}>{errors.wards}</p>
+          <p className={'text-xs mt-1 text-red-300'}>{errors.wards}</p>
         </div>
       </div>
       <div className="mt-4 card flex justify-content-center">

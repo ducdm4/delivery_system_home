@@ -201,6 +201,7 @@ const DetailDistrict: NextPage = () => {
                   <Dropdown
                     value={inputs.city}
                     onChange={(e) => handleChangeCity(e.value)}
+                    filter
                     options={cityList}
                     optionLabel="name"
                     placeholder="Select a City"

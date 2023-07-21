@@ -46,9 +46,6 @@ const ProfileImageInfo = ({ inputs, inputsError, setInputByValue }: Props) => {
       reader.onload = function () {
         setImageSelected(reader.result as string);
       };
-      reader.onerror = function (error) {
-        console.log('Error: ', error);
-      };
     }
   }
 

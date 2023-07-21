@@ -198,7 +198,7 @@ const DetailStreet: NextPage = () => {
     }
   }
 
-  const handleChangeSelect = (
+  const handleChangeAddressProp = (
     val: { id: number; name: string },
     key: string,
   ) => {
@@ -304,8 +304,9 @@ const DetailStreet: NextPage = () => {
                 <span className="p-float-label">
                   <Dropdown
                     value={inputs.city}
-                    onChange={(e) => handleChangeSelect(e.value, 'city')}
+                    onChange={(e) => handleChangeAddressProp(e.value, 'city')}
                     options={cityList}
+                    filter
                     optionLabel="name"
                     placeholder="Select a City"
                     className={'w-full p-inputtext-sm'}
@@ -319,8 +320,11 @@ const DetailStreet: NextPage = () => {
                 <span className="p-float-label">
                   <Dropdown
                     value={inputs.district}
-                    onChange={(e) => handleChangeSelect(e.value, 'district')}
+                    onChange={(e) =>
+                      handleChangeAddressProp(e.value, 'district')
+                    }
                     options={districtListFiltered}
+                    filter
                     optionLabel="name"
                     placeholder="Select a City"
                     className={'w-full p-inputtext-sm'}
@@ -334,9 +338,10 @@ const DetailStreet: NextPage = () => {
                 <span className="p-float-label">
                   <Dropdown
                     value={inputs.ward}
-                    onChange={(e) => handleChangeSelect(e.value, 'ward')}
+                    onChange={(e) => handleChangeAddressProp(e.value, 'ward')}
                     options={listWardFiltered()}
                     optionLabel="name"
+                    filter
                     placeholder="Select a Ward"
                     className={
                       (inputsError.ward !== '' ? 'p-invalid' : '') +
