@@ -2,9 +2,6 @@
   padding: 0.5rem 0;
 }
 
-.p-menubar {
-  background: rgb(253, 230, 18) !important;
-}
 .custom-file-input {
   color: transparent;
 }
@@ -39,6 +36,12 @@
 }
 .custom-file-input:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+.user-header {
+  .p-menuitem > .p-menuitem-link:not(.p-disabled):hover {
+    background: #389623 !important;
+  }
 }
 
 

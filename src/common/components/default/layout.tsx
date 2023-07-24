@@ -12,23 +12,26 @@ import {
 } from '../../../features/auth/authSlice';
 import { useRouter } from 'next/router';
 import { getUserProfilePicture } from '../../../features/photo/photoSlice';
+import HeaderForUser from './headerForUser';
+import Head from 'next/head';
 
 export default function Layout({ children }: PropsWithChildren) {
   const userInfo = useAppSelector(userLoggedIn);
   const dispatch = useAppDispatch();
   const [isShowHeader, setIsShowHeader] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const [isVerified, setIsVerified] = useState(true);
 
   const router = useRouter();
   const isAdminPage = router.pathname.split('/').indexOf('admin') > -1;
 
   if (typeof window !== 'undefined') {
     useLayoutEffect(() => {
+      const token = localStorage.getItem(
+        process.env.NEXT_PUBLIC_API_KEY || 'DSAccessToken',
+      );
       if (isAdminPage) {
+        setIsVerified(false);
         if (router.pathname.split('/').indexOf('login') === -1) {
-          const token = localStorage.getItem(
-            process.env.NEXT_PUBLIC_API_KEY || 'DSAccessToken',
-          );
           if (token && !userInfo.id) {
             const verify = dispatch(verifyUserLogin()).unwrap();
             verify.then((res) => {
@@ -48,6 +51,12 @@ export default function Layout({ children }: PropsWithChildren) {
             router.push('/');
           }
         }
+      } else {
+        if (!token) {
+          setIsVerified(true);
+        } else {
+          //TODO verify user
+        }
       }
     }, []);
   }
@@ -65,10 +74,29 @@ export default function Layout({ children }: PropsWithChildren) {
     );
   };
 
+  const header = () => {
+    if (isAdminPage) {
+      console.log('isVerified', isVerified);
+      if (isVerified && router.pathname.split('/').indexOf('login') === -1) {
+        return <Header />;
+      }
+    } else {
+      return <HeaderForUser />;
+    }
+    return '';
+  };
+
   return (
     <>
+      <Head>
+        <link
+          id="theme-link"
+          rel="stylesheet"
+          href="/themes/lara-light-blue/theme.css"
+        />
+      </Head>
       <main className={'bg-gray-100'}>
-        {isVerified && isShowHeader && <Header />}
+        {header()}
         <div className={'flex'}>
           <div
             className={

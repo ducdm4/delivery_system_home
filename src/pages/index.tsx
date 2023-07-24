@@ -9,7 +9,15 @@ import { useEffect } from 'react';
 const IndexPage: NextPage = () => {
   const userInfo = useAppSelector(userLoggedIn);
 
-  return <div></div>;
+  return (
+    <>
+      <div id="banner-block">
+        <button>new order</button>
+        <input type="text" />
+        <button>track your order</button>
+      </div>
+    </>
+  );
 };
 
 export default IndexPage;

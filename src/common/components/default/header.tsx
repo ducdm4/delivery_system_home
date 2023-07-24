@@ -133,7 +133,7 @@ export default function Header() {
   return (
     <Menubar
       className={
-        'fixed lg:w-full left-0 !px-[calc((100vw-1400px)/2)] z-10 justify-between !rounded-none !border-none'
+        '!bg-[#FDE612FF] fixed lg:w-full left-0 !px-[calc((100vw-1400px)/2)] z-10 justify-between !rounded-none !border-none'
       }
       model={items}
       start={start}
