@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { Avatar } from 'primereact/avatar';
 import { useAppSelector } from '../../hooks';
 import { logout, userLoggedIn } from '../../../features/auth/authSlice';
-import { profileImageState } from '../../../features/photo/photoSlice';
 import { Button } from 'primereact/button';
 import { Badge } from 'primereact/badge';
 import { OverlayPanel } from 'primereact/overlaypanel';
@@ -14,14 +13,13 @@ export default function HeaderForUser() {
   const router = useRouter();
   const dispatch = useDispatch();
   const userInfo = useAppSelector(userLoggedIn);
-  const userProfileImage = useAppSelector(profileImageState);
 
   const items = [
     {
       label: 'About us',
     },
     {
-      label: 'Contact',
+      label: 'Station',
     },
     {
       label: 'Hiring',
@@ -46,7 +44,7 @@ export default function HeaderForUser() {
         <Badge value="2"></Badge>
       </i>
       <Avatar className={'lg:!w-[3.5rem] lg:!h-[3.5rem]'} shape="circle">
-        <img className={'object-cover'} src={userProfileImage} />
+        <img className={'object-cover'} src="" />
       </Avatar>
     </div>
   );

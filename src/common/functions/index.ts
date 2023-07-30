@@ -15,8 +15,8 @@ export const handleChangeAddressProp = (
   key: string,
   inputs: KeyValue,
   setInputs: Function,
+  key2: string,
 ) => {
-  let addressNew = inputs.address;
   const addressToAdd: KeyValue = {};
   const levelKey = ['street', 'ward', 'district', 'city'];
   const levelValue = [0, 1, 2, 4];
@@ -28,27 +28,28 @@ export const handleChangeAddressProp = (
     count++;
   }
   addressToAdd[key] = val;
-  addressNew = {
-    ...inputs.address,
+  const addressNew = {
+    ...inputs[key2],
     ...addressToAdd,
   };
-  setInputByValue('address', addressNew, setInputs);
+  setInputByValue(key2, addressNew, setInputs);
 };
 
 export function handleChange(
   e: ChangeEvent<HTMLInputElement>,
   inputs: KeyValue,
   setInputs: Function,
+  keyAddress = '',
 ) {
   const name = e.target.name;
   const value = e.target.value;
   if (['building', 'detail'].includes(name)) {
-    const oldAddress = inputs.address;
+    const oldAddress = keyAddress ? inputs[keyAddress] : inputs.address;
     const newAddress = {
       ...oldAddress,
       [name]: value,
     };
-    setInputByValue('address', newAddress, setInputs);
+    setInputByValue(keyAddress, newAddress, setInputs);
   } else {
     setInputByValue(name, value, setInputs);
   }
