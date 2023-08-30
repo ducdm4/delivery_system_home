@@ -54,7 +54,7 @@ export default function HeaderForUser() {
   return (
     <Menubar
       className={
-        'user-header min-h-[5rem] !bg-[#4db542] fixed lg:w-full left-0 !px-[calc((100vw-1400px)/2)] z-10 justify-between !rounded-none !border-none'
+        'user-header min-h-[5rem] !bg-[#59a5ec] fixed lg:w-full left-0 !px-[calc((100vw-1400px)/2)] z-10 justify-between !rounded-none !border-none'
       }
       model={items}
       start={start}

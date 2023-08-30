@@ -5,10 +5,12 @@ import { AppState } from '../../store';
 
 export interface DistrictState {
   status: 'idle' | 'loading' | 'failed';
+  districtList: Array<KeyValue>;
 }
 
 const initialState: DistrictState = {
   status: 'idle',
+  districtList: [],
 };
 
 export const getDistrictInfo = createAsyncThunk(
@@ -44,6 +46,7 @@ export const DistrictSlice = createSlice({
       })
       .addCase(getDistrictListFilter.fulfilled, (state, action) => {
         state.status = 'idle';
+        state.districtList = action.payload.data?.list;
       });
   },
 });
@@ -52,4 +55,5 @@ export const {} = DistrictSlice.actions;
 
 export default DistrictSlice.reducer;
 
+export const districtList = (state: AppState) => state.district.districtList;
 export const districtLoading = (state: AppState) => state.district.status;

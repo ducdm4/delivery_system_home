@@ -12,6 +12,8 @@ import {
 import { useRouter } from 'next/router';
 import HeaderForUser from './headerForUser';
 import Head from 'next/head';
+import Footer from './footer';
+import { getAllConfigInfo } from '../../../features/config/configSlice';
 
 export default function Layout({ children }: PropsWithChildren) {
   const userInfo = useAppSelector(userLoggedIn);
@@ -24,6 +26,8 @@ export default function Layout({ children }: PropsWithChildren) {
       const token = localStorage.getItem(
         process.env.NEXT_PUBLIC_API_KEY || 'DSAccessToken',
       );
+      const getConfig = dispatch(getAllConfigInfo()).unwrap();
+      getConfig.then();
     }, []);
   }
 
@@ -45,12 +49,13 @@ export default function Layout({ children }: PropsWithChildren) {
         <div className={'flex'}>
           <div
             className={
-              'mt-[5rem] lg:w-[1440px] relative min-h-[calc(100vh-74px)] m-auto'
+              'mt-[5rem] mb-8 lg:w-[1440px] relative min-h-[calc(100vh-176px)] m-auto'
             }
           >
             {children}
           </div>
         </div>
+        <Footer />
       </main>
     </>
   );

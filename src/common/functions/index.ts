@@ -2,7 +2,7 @@ import { KeyValue } from '../config/interfaces';
 import { ChangeEvent } from 'react';
 import { imageType } from '../config/constant';
 
-export const ValidateEmail = (email: string) => {
+export const validateEmail = (email: string) => {
   return email
     .toLowerCase()
     .match(
@@ -15,7 +15,6 @@ export const handleChangeAddressProp = (
   key: string,
   inputs: KeyValue,
   setInputs: Function,
-  key2: string,
 ) => {
   const addressToAdd: KeyValue = {};
   const levelKey = ['street', 'ward', 'district', 'city'];
@@ -29,10 +28,10 @@ export const handleChangeAddressProp = (
   }
   addressToAdd[key] = val;
   const addressNew = {
-    ...inputs[key2],
+    ...inputs,
     ...addressToAdd,
   };
-  setInputByValue(key2, addressNew, setInputs);
+  setInputs(addressNew);
 };
 
 export function handleChange(
@@ -147,9 +146,12 @@ export function validateArrayRequired(
 export function validateEmailText(input: string) {
   let message = validateRequired(input, 'email');
   if (!message) {
-    if (!ValidateEmail(input)) {
+    if (!validateEmail(input)) {
       message = 'Wrong email format';
     }
   }
   return message;
+}
+export function numberWithCommas(x: number) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

@@ -5,10 +5,12 @@ import { AppState } from '../../store';
 
 export interface StreetState {
   status: 'idle' | 'loading' | 'failed';
+  streetList: Array<KeyValue>;
 }
 
 const initialState: StreetState = {
   status: 'idle',
+  streetList: [],
 };
 
 export const getStreetInfo = createAsyncThunk(
@@ -44,6 +46,7 @@ export const StreetSlice = createSlice({
       })
       .addCase(getStreetListFilter.fulfilled, (state, action) => {
         state.status = 'idle';
+        state.streetList = action.payload.data?.list;
       });
   },
 });
@@ -52,4 +55,5 @@ export const {} = StreetSlice.actions;
 
 export default StreetSlice.reducer;
 
+export const streetListStore = (state: AppState) => state.street.streetList;
 export const streetLoading = (state: AppState) => state.street.status;

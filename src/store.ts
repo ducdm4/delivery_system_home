@@ -5,6 +5,9 @@ import cityReducer from './features/city/citySlice';
 import districtReducer from './features/district/districtSlice';
 import wardReducer from './features/ward/wardSlice';
 import streetReducer from './features/street/streetSlice';
+import configReducer from './features/config/configSlice';
+import orderReducer from './features/order/orderSlice';
+import photoReducer from './features/photo/photoSlice';
 
 export function makeStore() {
   return configureStore({
@@ -14,6 +17,9 @@ export function makeStore() {
       district: districtReducer,
       ward: wardReducer,
       street: streetReducer,
+      config: configReducer,
+      order: orderReducer,
+      photo: photoReducer,
     },
   });
 }

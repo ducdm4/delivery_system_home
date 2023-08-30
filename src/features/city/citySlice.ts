@@ -5,10 +5,12 @@ import { AppState } from '../../store';
 
 export interface CityState {
   status: 'idle' | 'loading' | 'failed';
+  cityList: Array<KeyValue>;
 }
 
 const initialState: CityState = {
   status: 'idle',
+  cityList: [],
 };
 
 export const getCityInfo = createAsyncThunk(
@@ -44,6 +46,7 @@ export const CitySlice = createSlice({
       })
       .addCase(getCityListFilter.fulfilled, (state, action) => {
         state.status = 'idle';
+        state.cityList = action.payload.data?.list;
       });
   },
 });
@@ -52,4 +55,5 @@ export const {} = CitySlice.actions;
 
 export default CitySlice.reducer;
 
+export const cityListState = (state: AppState) => state.city.cityList;
 export const cityLoading = (state: AppState) => state.city.status;

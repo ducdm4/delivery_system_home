@@ -25,3 +25,46 @@ export const STATION_TYPE = [
   { id: 1, name: 'District station' },
   { id: 2, name: 'City station' },
 ];
+
+export const parcelWeightList = [
+  {
+    id: 0,
+    name: '< 1kg',
+  },
+  {
+    id: 1,
+    name: '1kg < 2kg',
+  },
+  {
+    id: 2,
+    name: '2kg < 3kg',
+  },
+  {
+    id: 3,
+    name: '3kg < 4kg',
+  },
+  {
+    id: 4,
+    name: '4kg < 5kg',
+  },
+  {
+    id: 5,
+    name: '5kg < 6kg',
+  },
+  {
+    id: 6,
+    name: '6kg < 7kg',
+  },
+  {
+    id: 7,
+    name: '7kg < 8kg',
+  },
+  {
+    id: 8,
+    name: '8kg < 9kg',
+  },
+  {
+    id: 9,
+    name: '9kg < 10kg',
+  },
+];

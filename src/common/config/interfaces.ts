@@ -26,6 +26,12 @@ export interface FailedResponse {
   message: string;
 }
 
-export interface TableListRefObject {
-  handleSearch: () => void;
+export interface contactInputRef {
+  submitContact: () => boolean;
+  saveData: () => void;
+}
+
+export interface addressInputRef {
+  submitAddress: () => boolean;
+  saveData: () => void;
 }
