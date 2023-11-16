@@ -45,15 +45,14 @@ function OrderStepOne({
 
   function computeAddress(a: KeyValue) {
     if (a.detail) {
-      return `${a.building} ${a.detail} ${a.street.name + ', '}${
-        a.ward.name + ', '
-      }${a.district.name + ', '}${a.city.name}`;
+      return `${a.building} ${a.detail} ${a.street.name + ', '}${a.ward.name + ', '
+        }${a.district.name + ', '}${a.city.name}`;
     }
     return <span className={'text-sm text-red-700'}>Please select!</span>;
   }
 
   function addNewParcel() {
-    const newParcels = JSON.parse(JSON.stringify(inputs.parcels));
+    const newParcels: Array<KeyValue> = [].concat(inputs.parcels);
     newParcels.push(initParcelItem);
     setInputs((old: KeyValue) => {
       return {
@@ -178,7 +177,7 @@ function OrderStepOne({
                 <label className={'text-gray-500'} htmlFor="senderPhone">
                   Sender info:
                 </label>
-                <p>{computeUserInfo('sender')}</p>
+                <div className="text-xl">{computeUserInfo('sender')}</div>
               </div>
               <Button
                 onClick={() => prepareShowPopup('sender')}
@@ -192,7 +191,9 @@ function OrderStepOne({
                 <label className={'text-gray-500'} htmlFor="senderPhone">
                   Pickup address:
                 </label>
-                <p>{computeAddress(inputs.pickupAddress)}</p>
+                <p className="text-xl">
+                  {computeAddress(inputs.pickupAddress)}
+                </p>
               </div>
             </div>
           </div>
@@ -208,7 +209,7 @@ function OrderStepOne({
                   <label className={'text-gray-500'} htmlFor="senderPhone">
                     Recipient info:
                   </label>
-                  <p>{computeUserInfo('receiver')}</p>
+                  <div className="text-xl">{computeUserInfo('receiver')}</div>
                 </div>
                 <Button
                   onClick={() => prepareShowPopup('receiver')}
@@ -222,7 +223,9 @@ function OrderStepOne({
                   <label className={'text-gray-500'} htmlFor="senderPhone">
                     Drop-off address:
                   </label>
-                  <p>{computeAddress(inputs.dropOffAddress)}</p>
+                  <p className="text-xl">
+                    {computeAddress(inputs.dropOffAddress)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -251,11 +254,14 @@ function OrderStepOne({
             </Accordion>
           )}
           <div className={'mt-4 text-right'}>
-            <Button
-              severity={'secondary'}
-              icon="pi pi-plus"
-              onClick={addNewParcel}
-            />
+            {inputs.parcels.length < 3 &&
+              <Button
+                severity={'secondary'}
+                icon="pi pi-plus"
+                onClick={addNewParcel}
+              />
+            }
+
           </div>
         </div>
         <div className={'w-full px-5 col-span-3'}>

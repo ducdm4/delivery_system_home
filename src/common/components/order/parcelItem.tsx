@@ -20,7 +20,7 @@ function ParcelItem({
   index,
   deleteParcel,
   isHideDelete,
-  errors,
+  errors
 }: Props) {
   function customSetInputs(key: string, value: any) {
     setInputs((old: KeyValue) => {
@@ -38,6 +38,7 @@ function ParcelItem({
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
+        console.log('imageFile', file)
         customSetInputs('imageSelected', reader.result as string);
         customSetInputs('imageFile', file);
       };
@@ -90,7 +91,7 @@ function ParcelItem({
         <div className={'basis-7/12'}>
           <div className="flex flex-col items-end justify-end w-full pt-8">
             <label
-              htmlFor="images"
+              htmlFor={`images-select-${index}`}
               className="drop-container w-40 h-40"
               id="dropcontainer"
             >
@@ -100,7 +101,7 @@ function ParcelItem({
               <input
                 className={'hidden'}
                 type="file"
-                id="images"
+                id={`images-select-${index}`}
                 accept="image/*"
                 required
                 onChange={onSelectedImage}
