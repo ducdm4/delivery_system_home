@@ -45,8 +45,9 @@ function OrderStepOne({
 
   function computeAddress(a: KeyValue) {
     if (a.detail) {
-      return `${a.building} ${a.detail} ${a.street.name + ', '}${a.ward.name + ', '
-        }${a.district.name + ', '}${a.city.name}`;
+      return `${a.building} ${a.detail} ${a.street.name + ', '}${
+        a.ward.name + ', '
+      }${a.district.name + ', '}${a.city.name}`;
     }
     return <span className={'text-sm text-red-700'}>Please select!</span>;
   }
@@ -254,14 +255,13 @@ function OrderStepOne({
             </Accordion>
           )}
           <div className={'mt-4 text-right'}>
-            {inputs.parcels.length < 3 &&
+            {inputs.parcels.length < 3 && (
               <Button
                 severity={'secondary'}
                 icon="pi pi-plus"
                 onClick={addNewParcel}
               />
-            }
-
+            )}
           </div>
         </div>
         <div className={'w-full px-5 col-span-3'}>

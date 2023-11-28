@@ -20,7 +20,7 @@ function ParcelItem({
   index,
   deleteParcel,
   isHideDelete,
-  errors
+  errors,
 }: Props) {
   function customSetInputs(key: string, value: any) {
     setInputs((old: KeyValue) => {
@@ -38,7 +38,6 @@ function ParcelItem({
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
-        console.log('imageFile', file)
         customSetInputs('imageSelected', reader.result as string);
         customSetInputs('imageFile', file);
       };
