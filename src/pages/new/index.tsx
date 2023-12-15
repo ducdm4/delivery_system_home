@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../common/hooks';
 import { createNewPhoto } from '../../features/photo/photoSlice';
 import { createNewOrder } from '../../features/order/orderSlice';
 import { toast } from 'react-toastify';
+import Head from 'next/head';
 
 const keyStringAnyObj: KeyValue = {};
 export const InputsContext = createContext(keyStringAnyObj);
@@ -102,6 +103,10 @@ const NewOrderPage: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>New order - Delivery system</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <InputsContext.Provider value={{ inputs, customSetInputs }}>
         <div className={'w-full bg-white mt-4 py-5 shadow-md'}>
           <div

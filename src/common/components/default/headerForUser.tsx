@@ -1,23 +1,18 @@
 import React, { useRef, useState } from 'react';
 import { Menubar } from 'primereact/menubar';
 import { useRouter } from 'next/router';
-import { Avatar } from 'primereact/avatar';
 import { useAppSelector } from '../../hooks';
 import { logout, userLoggedIn } from '../../../features/auth/authSlice';
-import { Button } from 'primereact/button';
-import { Badge } from 'primereact/badge';
-import { OverlayPanel } from 'primereact/overlaypanel';
 import { useDispatch } from 'react-redux';
 
 export default function HeaderForUser() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const userInfo = useAppSelector(userLoggedIn);
+
+  function goAnyWhere(url: string) {
+    router.push(url);
+  }
 
   const items = [
-    {
-      label: 'About us',
-    },
     {
       label: 'Station',
     },
@@ -26,30 +21,14 @@ export default function HeaderForUser() {
     },
   ];
 
-  function doLogout() {
-    dispatch(logout());
-    router.push('/');
-  }
-
   const start = (
-    <p className={'font-bold text-xl text-white pr-5'}>Delivery System</p>
+    <p
+      onClick={() => goAnyWhere('/')}
+      className={'font-bold text-xl hover:cursor-pointer text-white pr-5'}
+    >
+      Delivery System
+    </p>
   );
-
-  const end = (
-    <div className={'flex items-center '}>
-      <i
-        className="pi pi-bell p-overlay-badge mr-6"
-        style={{ fontSize: '1.5rem' }}
-      >
-        <Badge value="2"></Badge>
-      </i>
-      <Avatar className={'lg:!w-[3.5rem] lg:!h-[3.5rem]'} shape="circle">
-        <img className={'object-cover'} src="" />
-      </Avatar>
-    </div>
-  );
-
-  const endLogin = <p className={'text-white'}>Login</p>;
 
   return (
     <Menubar
@@ -58,7 +37,7 @@ export default function HeaderForUser() {
       }
       model={items}
       start={start}
-      end={endLogin}
+      end={''}
       pt={{
         label: {
           className: '!text-white',

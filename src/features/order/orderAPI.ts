@@ -30,3 +30,17 @@ export const createOrderApi = async (data: KeyValue) => {
   );
   return response;
 };
+
+export const getOrderTrackingAPI = async (data: string) => {
+  const response = await useAPI(
+    {
+      url: `orders/tracking/${data}`,
+      method: 'GET',
+      header: {
+        'Content-Type': 'application/json',
+      },
+    },
+    false,
+  );
+  return response;
+};

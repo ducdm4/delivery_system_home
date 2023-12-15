@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createOrderApi, getQuoteAPI } from './orderAPI';
+import { createOrderApi, getOrderTrackingAPI, getQuoteAPI } from './orderAPI';
 import { KeyValue } from '../../common/config/interfaces';
 import { AppState } from '../../store';
 
@@ -25,6 +25,13 @@ export const createNewOrder = createAsyncThunk(
   },
 );
 
+export const trackingOrder = createAsyncThunk(
+  'order/track',
+  async (data: string) => {
+    return await getOrderTrackingAPI(data);
+  },
+);
+
 export const OrderSlice = createSlice({
   name: 'order',
   initialState,
@@ -42,6 +49,13 @@ export const OrderSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createNewOrder.fulfilled, (state, action) => {
+        state.status = 'idle';
+      });
+    builder
+      .addCase(trackingOrder.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(trackingOrder.fulfilled, (state, action) => {
         state.status = 'idle';
       });
   },
