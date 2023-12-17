@@ -19,7 +19,6 @@ const TrackingPage: NextPage = () => {
       if (res.isSuccess) {
         setTrackingList(res.data.trackings);
       }
-      console.log(res);
     }
   }
 

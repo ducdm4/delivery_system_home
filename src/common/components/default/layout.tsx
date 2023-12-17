@@ -14,6 +14,7 @@ import HeaderForUser from './headerForUser';
 import Head from 'next/head';
 import Footer from './footer';
 import { getAllConfigInfo } from '../../../features/config/configSlice';
+import ChatDialog from '../chat/ChatDialog';
 
 export default function Layout({ children }: PropsWithChildren) {
   const userInfo = useAppSelector(userLoggedIn);
@@ -56,6 +57,7 @@ export default function Layout({ children }: PropsWithChildren) {
           </div>
         </div>
         <Footer />
+        <ChatDialog />
       </main>
     </>
   );

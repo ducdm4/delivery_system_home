@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-import { InputNumber } from 'primereact/inputnumber';
 import { useRouter } from 'next/router';
 
 const IndexPage: NextPage = () => {

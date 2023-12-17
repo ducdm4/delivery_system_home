@@ -126,7 +126,6 @@ function OrderStepOne({
     let check = true;
     const errors: Array<KeyValue> = [];
     inputs.parcels.forEach((parcel: KeyValue) => {
-      console.log('parcel', parcel);
       const errorItem = {
         description: '',
         image: '',
