@@ -158,105 +158,108 @@ const AddressPopup = forwardRef(
 
     return (
       <>
-        <div className={'flex-row flex gap-8 mt-8'}>
-          <div className={'basis-1/2'}>
-            <span className="p-float-label">
-              <Dropdown
-                value={selfInputs.city}
-                onChange={(e) => handleSelectAddressChanged(e.value, 'city')}
-                options={cityListStore}
-                filter
-                optionLabel="name"
-                placeholder="Select a City"
-                className={'w-full p-inputtext-sm'}
-                name="city"
-                id="city"
-              />
-              <label htmlFor="city">City</label>
-            </span>
-            <p className={'text-xs mt-1 text-red-300'}>{errors.city}</p>
+        <div className="grid-cols-1 grid lg:grid-cols-2 gap-8 mt-8">
+          <div className="grid-cols-1 grid gap-8">
+            <div>
+              <span className="p-float-label">
+                <Dropdown
+                  value={selfInputs.city}
+                  onChange={(e) => handleSelectAddressChanged(e.value, 'city')}
+                  options={cityListStore}
+                  filter
+                  optionLabel="name"
+                  placeholder="Select a City"
+                  className={'w-full p-inputtext-sm'}
+                  name="city"
+                  id="city"
+                />
+                <label htmlFor="city">City</label>
+              </span>
+              <p className={'text-xs mt-1 text-red-300'}>{errors.city}</p>
+            </div>
+            <div>
+              <span className="p-float-label">
+                <Dropdown
+                  value={selfInputs.district}
+                  onChange={(e) =>
+                    handleSelectAddressChanged(e.value, 'district')
+                  }
+                  options={districtListFiltered()}
+                  filter
+                  optionLabel="name"
+                  placeholder="Select a District"
+                  className={'w-full p-inputtext-sm'}
+                  name="city"
+                  id="city"
+                />
+                <label htmlFor="city">District</label>
+              </span>
+              <p className={'text-xs mt-1 text-red-300'}>{errors.district}</p>
+            </div>
+            <div>
+              <span className="p-float-label">
+                <Dropdown
+                  value={selfInputs.ward}
+                  onChange={(e) => handleSelectAddressChanged(e.value, 'ward')}
+                  options={wardListFiltered()}
+                  filter
+                  optionLabel="name"
+                  placeholder="Select a Ward"
+                  className={'w-full p-inputtext-sm'}
+                  name="ward"
+                  id="ward"
+                />
+                <label htmlFor="ward">Ward</label>
+              </span>
+              <p className={'text-xs mt-1 text-red-300'}>{errors.ward}</p>
+            </div>
           </div>
-          <div className={'basis-1/2'}>
-            <span className="p-float-label">
-              <Dropdown
-                value={selfInputs.street}
-                onChange={(e) => handleSelectAddressChanged(e.value, 'street')}
-                options={streetListFiltered()}
-                optionLabel="name"
-                filter
-                placeholder="Select a Street"
-                className={'w-full p-inputtext-sm'}
-                name="street"
-                id="street"
-              />
-              <label htmlFor="street">Street</label>
-            </span>
-            <p className={'text-xs mt-1 text-red-300'}>{errors.street}</p>
-          </div>
-        </div>
-        <div className={'flex-row flex gap-8 mt-8'}>
-          <div className={'basis-1/2'}>
-            <span className="p-float-label">
-              <Dropdown
-                value={selfInputs.district}
-                onChange={(e) =>
-                  handleSelectAddressChanged(e.value, 'district')
-                }
-                options={districtListFiltered()}
-                filter
-                optionLabel="name"
-                placeholder="Select a District"
-                className={'w-full p-inputtext-sm'}
-                name="city"
-                id="city"
-              />
-              <label htmlFor="city">District</label>
-            </span>
-            <p className={'text-xs mt-1 text-red-300'}>{errors.district}</p>
-          </div>
-          <div className={'basis-1/2'}>
-            <span className="p-float-label">
-              <InputText
-                id="detail"
-                name="detail"
-                value={selfInputs.detail}
-                onChange={(e) => handleChangeText(e)}
-                className={'w-full p-inputtext-sm'}
-              />
-              <label htmlFor="detail">Detail</label>
-            </span>
-            <p className={'text-xs mt-1 text-red-300'}>{errors.detail}</p>
-          </div>
-        </div>
-        <div className={'flex-row flex gap-8 mt-8'}>
-          <div className={'basis-1/2'}>
-            <span className="p-float-label">
-              <Dropdown
-                value={selfInputs.ward}
-                onChange={(e) => handleSelectAddressChanged(e.value, 'ward')}
-                options={wardListFiltered()}
-                filter
-                optionLabel="name"
-                placeholder="Select a Ward"
-                className={'w-full p-inputtext-sm'}
-                name="ward"
-                id="ward"
-              />
-              <label htmlFor="ward">Ward</label>
-            </span>
-            <p className={'text-xs mt-1 text-red-300'}>{errors.ward}</p>
-          </div>
-          <div className={'basis-1/2'}>
-            <span className="p-float-label">
-              <InputText
-                id="building"
-                name="building"
-                value={selfInputs.building}
-                onChange={(e) => handleChangeText(e)}
-                className={'w-full p-inputtext-sm'}
-              />
-              <label htmlFor="building">Building</label>
-            </span>
+
+          <div className="grid-cols-1 grid gap-8">
+            <div>
+              <span className="p-float-label">
+                <Dropdown
+                  value={selfInputs.street}
+                  onChange={(e) =>
+                    handleSelectAddressChanged(e.value, 'street')
+                  }
+                  options={streetListFiltered()}
+                  optionLabel="name"
+                  filter
+                  placeholder="Select a Street"
+                  className={'w-full p-inputtext-sm'}
+                  name="street"
+                  id="street"
+                />
+                <label htmlFor="street">Street</label>
+              </span>
+              <p className={'text-xs mt-1 text-red-300'}>{errors.street}</p>
+            </div>
+            <div>
+              <span className="p-float-label">
+                <InputText
+                  id="detail"
+                  name="detail"
+                  value={selfInputs.detail}
+                  onChange={(e) => handleChangeText(e)}
+                  className={'w-full p-inputtext-sm'}
+                />
+                <label htmlFor="detail">Detail</label>
+              </span>
+              <p className={'text-xs mt-1 text-red-300'}>{errors.detail}</p>
+            </div>
+            <div>
+              <span className="p-float-label">
+                <InputText
+                  id="building"
+                  name="building"
+                  value={selfInputs.building}
+                  onChange={(e) => handleChangeText(e)}
+                  className={'w-full p-inputtext-sm'}
+                />
+                <label htmlFor="building">Building</label>
+              </span>
+            </div>
           </div>
         </div>
       </>

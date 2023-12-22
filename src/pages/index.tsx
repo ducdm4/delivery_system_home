@@ -20,7 +20,7 @@ const IndexPage: NextPage = () => {
         <title>Delivery system</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div id="banner-block" className={'bg-blue-100 rounded mt-4 py-24'}>
+      <div id="banner-block" className={'bg-blue-100 rounded mt-4 py-24 px-4'}>
         <p
           className={
             'text-4xl uppercase font-semibold text-center text-gray-700'

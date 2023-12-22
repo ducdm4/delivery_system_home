@@ -44,3 +44,32 @@ export const getOrderTrackingAPI = async (data: string) => {
   );
   return response;
 };
+
+export const customerRequestCancelAPI = async (data: string) => {
+  const response = await useAPI(
+    {
+      url: `orders/customerRequestCancel/${data}`,
+      method: 'PATCH',
+      header: {
+        'Content-Type': 'application/json',
+      },
+    },
+    false,
+  );
+  return response;
+};
+
+export const customerConfirmCancelAPI = async (data: KeyValue) => {
+  const response = await useAPI(
+    {
+      url: `orders/customerConfirmCancel/${data.trackingId}`,
+      method: 'PATCH',
+      header: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify({ otp: data.otp }),
+    },
+    false,
+  );
+  return response;
+};

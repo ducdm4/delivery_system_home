@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createOrderApi, getOrderTrackingAPI, getQuoteAPI } from './orderAPI';
+import {
+  createOrderApi,
+  customerConfirmCancelAPI,
+  customerRequestCancelAPI,
+  getOrderTrackingAPI,
+  getQuoteAPI,
+} from './orderAPI';
 import { KeyValue } from '../../common/config/interfaces';
 import { AppState } from '../../store';
 
@@ -32,6 +38,20 @@ export const trackingOrder = createAsyncThunk(
   },
 );
 
+export const customerRequestCancel = createAsyncThunk(
+  'order/customerRequestCancel',
+  async (data: string) => {
+    return await customerRequestCancelAPI(data);
+  },
+);
+
+export const customerConfirmCancel = createAsyncThunk(
+  'order/customerConfirmCancel',
+  async (data: KeyValue) => {
+    return await customerConfirmCancelAPI(data);
+  },
+);
+
 export const OrderSlice = createSlice({
   name: 'order',
   initialState,
@@ -56,6 +76,20 @@ export const OrderSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(trackingOrder.fulfilled, (state, action) => {
+        state.status = 'idle';
+      });
+    builder
+      .addCase(customerRequestCancel.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(customerRequestCancel.fulfilled, (state, action) => {
+        state.status = 'idle';
+      });
+    builder
+      .addCase(customerConfirmCancel.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(customerConfirmCancel.fulfilled, (state, action) => {
         state.status = 'idle';
       });
   },

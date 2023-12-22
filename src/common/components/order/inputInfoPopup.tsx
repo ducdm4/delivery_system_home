@@ -67,7 +67,7 @@ function InputInfoPopup({
       <Dialog
         header={header}
         visible={isShow}
-        style={{ width: '800px' }}
+        className="w-[98vw] lg:w-[800px] h-[90vh] lg:h-auto"
         onHide={() => setIsShow(false)}
       >
         <ContactPopup

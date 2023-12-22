@@ -164,7 +164,9 @@ function OrderStepOne({
     <>
       <div
         id="main-order-container"
-        className={'grid grid-cols-10 justify-items-center mt-10'}
+        className={
+          'lg:grid lg:grid-cols-10 sm:flex sm:flex-col justify-items-center lg:mt-10 mt-5'
+        }
       >
         <div className={'w-full text-center px-5 col-span-4'}>
           <p className={'text-xl font-semibold'}>
@@ -172,7 +174,7 @@ function OrderStepOne({
             SENDER
           </p>
           <div>
-            <div className="pt-8 text-left flex gap-4 items-start justify-between">
+            <div className="lg:pt-8 pt-4 text-left flex gap-4 items-start justify-between">
               <div>
                 <label className={'text-gray-500'} htmlFor="senderPhone">
                   Sender info:
@@ -204,7 +206,7 @@ function OrderStepOne({
               RECIPIENT
             </p>
             <div>
-              <div className="pt-8 text-left flex gap-4 items-start justify-between">
+              <div className="pt-4 lg:pt-8 text-left flex gap-4 items-start justify-between">
                 <div>
                   <label className={'text-gray-500'} htmlFor="senderPhone">
                     Recipient info:
@@ -231,12 +233,16 @@ function OrderStepOne({
             </div>
           </div>
         </div>
+        <div className={'lg:hidden block'}>
+          <Divider type="dashed" />
+        </div>
+
         <div className={'w-full text-center px-5 col-span-3'}>
           <p className={'text-xl font-semibold'}>
             <i className="fa-solid fa-box mr-2 text-blue-900"></i> PARCEL
           </p>
           {inputs.parcels.length > 0 && (
-            <Accordion className={'pt-8'} activeIndex={0}>
+            <Accordion className={'lg:pt-8 pt-4'} activeIndex={0}>
               {inputs.parcels.map((item: KeyValue, index: number) => {
                 return (
                   <AccordionTab key={index} header={`Parcel #${index + 1}`}>
@@ -263,11 +269,14 @@ function OrderStepOne({
             )}
           </div>
         </div>
+        <div className={'lg:hidden block'}>
+          <Divider type="dashed" />
+        </div>
         <div className={'w-full px-5 col-span-3'}>
           <p className={'text-xl text-center font-semibold'}>
             <i className="fa-solid fa-money-bills text-blue-900"></i> SUMMARY
           </p>
-          <div className="pt-8">
+          <div className="pt-4 lg:pt-8">
             <div className={''}>
               <Checkbox
                 name="isRecipientPayingFare"

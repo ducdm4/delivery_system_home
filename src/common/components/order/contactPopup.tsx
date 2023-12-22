@@ -76,7 +76,7 @@ const ContactPopup = forwardRef(
 
     return (
       <>
-        <div className={'flex gap-4'}>
+        <div className={'flex-col lg:grid lg:grid-cols-3 gap-4'}>
           <div className="pt-8 basis-1/3">
             <span className="p-float-label">
               <InputText

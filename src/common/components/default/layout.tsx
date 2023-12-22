@@ -47,10 +47,10 @@ export default function Layout({ children }: PropsWithChildren) {
       </Head>
       <main className={'bg-gray-100'}>
         {header()}
-        <div className={'flex'}>
+        <div className={'flex '}>
           <div
             className={
-              'mt-[5rem] mb-8 lg:w-[1440px] relative min-h-[calc(100vh-176px)] m-auto'
+              'mt-[5rem] mb-8 lg:w-[1440px] relative lg:min-h-[calc(100vh-176px)] min-h-[calc(100vh-192px)] m-auto'
             }
           >
             {children}

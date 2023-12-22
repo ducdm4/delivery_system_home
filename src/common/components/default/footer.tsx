@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <div
       className={
-        'lg:h-[4rem] !px-[calc((100vw-1400px)/2)] bg-gray-800 text-white flex items-center'
+        'lg:h-[4rem] h-20 px-4 lg:px-[calc((100vw-1400px)/2)] bg-gray-800 text-white flex items-center'
       }
     >
       <p className={'text-sm'}>

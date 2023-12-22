@@ -3,11 +3,12 @@ import React, { createContext, useState } from 'react';
 import { KeyValue } from '../../common/config/interfaces';
 import OrderStepOne from '../../common/components/order/step1';
 import OrderStep2 from '../../common/components/order/step2';
-import { useAppDispatch } from '../../common/hooks';
+import { useAppDispatch, useAppSelector } from '../../common/hooks';
 import { createNewPhoto } from '../../features/photo/photoSlice';
-import { createNewOrder } from '../../features/order/orderSlice';
+import { createNewOrder, orderLoading } from '../../features/order/orderSlice';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 const keyStringAnyObj: KeyValue = {};
 export const InputsContext = createContext(keyStringAnyObj);
@@ -53,6 +54,7 @@ const NewOrderPage: NextPage = () => {
   const [stationPickupData, setStationPickupData] = useState(keyStringAnyObj);
   const [activeIndex, setActiveIndex] = useState(0);
   const dispatch = useAppDispatch();
+  const currentLoading = useAppSelector(orderLoading);
 
   function customSetInputs(key: string, value: any) {
     setInputs((old: KeyValue) => {
@@ -114,9 +116,22 @@ const NewOrderPage: NextPage = () => {
               'text-2xl font-bold text-gray-600 px-4 flex items-center gap-2'
             }
           >
-            <img width="30px" height="30px" src={'./icons/man-carrying.png'} />
-            <span>NEW DELIVERY</span>
+            <img
+              className="h-6 w-6 lg:w-8 lg:h-8"
+              src={'./icons/man-carrying.png'}
+            />
+            <span className="">NEW DELIVERY</span>
           </div>
+          {currentLoading === 'loading' && (
+            <div className="flex items-center justify-center mt-4">
+              <ProgressSpinner
+                style={{ width: '50px', height: '50px' }}
+                strokeWidth="8"
+                fill="#fff"
+                animationDuration="1.5s"
+              />
+            </div>
+          )}
           {activeIndex === 0 && (
             <OrderStepOne
               initParcelItem={initParcelItem}

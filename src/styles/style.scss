@@ -76,9 +76,27 @@
   transition: color .2s ease-in-out;
 }
 
-
-@media screen and (max-width: 540px){
+@media screen and (max-width: 640px){
+  .p-menubar {
+    position: fixed !important;
+    width: 100%;
+  }
   .p-menubar-end {
     display: none;
+  }
+  .p-menubar-root-list {
+    background-color: #5aa5d3 !important
+  }
+}
+@media screen and (max-width: 1024px){
+  .p-menubar {
+    position: fixed !important;
+    width: 100%;
+  }
+  .p-menubar-end {
+    display: none;
+  }
+  .p-menubar-root-list {
+    background-color: #5aa5d3 !important
   }
 }
