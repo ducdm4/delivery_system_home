@@ -8,7 +8,11 @@ import ChatRow from './ChatRow';
 
 const ChatDialog = () => {
   const [isShowFullWindow, setIsShowFullWindow] = useState(false);
-  const [userNickname, setUserNickname] = useState('');
+  const [currentChatInfo, setCurrentChatInfo] = useState({
+    nickname: '',
+    roomName: '',
+    operatorName: '',
+  });
   const [messageList, setMessageList] = useState([] as KeyValue[]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [chatStatus, setChatStatus] = useState({
@@ -17,8 +21,6 @@ const ChatDialog = () => {
     isWaitingOperatorToChat: false,
     isOperatorJoined: false,
   });
-  const [currentChatRoomName, setCurrentChatRoomName] = useState('');
-  const [currentOperatorName, setCurrentOperatorName] = useState('');
 
   useEffect(() => {
     const savedChat = localStorage.getItem(
@@ -43,9 +45,11 @@ const ChatDialog = () => {
                 isOperatorJoined: true,
                 isWaitingOperatorToChat: true,
               });
-              setCurrentOperatorName(data.operator);
-              setCurrentChatRoomName(data.roomName);
-              setUserNickname(data.nickname);
+              setCurrentChatInfo({
+                roomName: data.roomName,
+                operatorName: data.operator,
+                nickname: data.nickname,
+              });
               data.instanceList.push(socket.id);
               localStorage.setItem(
                 process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
@@ -62,20 +66,6 @@ const ChatDialog = () => {
       }
     };
   }, []);
-
-  useEffect(() => {
-    const currentSaved = localStorage.getItem(
-      process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
-    );
-    if (currentSaved) {
-      const data = JSON.parse(currentSaved);
-      data.operator = currentOperatorName;
-      localStorage.setItem(
-        process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
-        JSON.stringify(data),
-      );
-    }
-  }, [currentOperatorName]);
 
   function registerListener() {
     socket.on('operatorJoinedChat', (data: KeyValue) => {
@@ -106,11 +96,11 @@ const ChatDialog = () => {
       let fromSelf = false;
       let isNeedUpdate = false;
 
-      if (newMessageContent.from !== userNickname) {
+      if (newMessageContent.from !== currentChatInfo.nickname) {
         fromSelf = false;
         isNeedUpdate = true;
       } else if (
-        newMessageContent.from === userNickname &&
+        newMessageContent.from === currentChatInfo.nickname &&
         socket.id !== newMessageContent.instanceId
       ) {
         fromSelf = true;
@@ -132,33 +122,41 @@ const ChatDialog = () => {
     }
   }, [newMessageContent]);
 
-  const [newInstanceJoined, setNewInstanceJoined] = useState('');
-
   function handleNewClientInstanceJoined(data: KeyValue) {
-    setNewInstanceJoined(data.instanceId);
-  }
-
-  useEffect(() => {
     const current = localStorage.getItem(
       process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
     );
     if (current) {
       const data = JSON.parse(current);
-      data.instanceList.push(newInstanceJoined);
+      data.instanceList.push(data.instanceId);
       localStorage.setItem(
         process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
         JSON.stringify(data),
       );
     }
-  }, [newInstanceJoined]);
+  }
 
   function handleOperatorJoin(data: KeyValue) {
-    setCurrentOperatorName(data.operatorName);
+    setCurrentChatInfo((prev) => ({
+      ...prev,
+      operatorName: data.operatorName,
+    }));
     setChatStatus({
       ...chatStatus,
       isOperatorJoined: true,
       isWaitingOperatorToChat: true,
     });
+    const currentSaved = localStorage.getItem(
+      process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
+    );
+    if (currentSaved) {
+      const dataSaved = JSON.parse(currentSaved);
+      dataSaved.operator = data.operatorName;
+      localStorage.setItem(
+        process.env.NEXT_PUBLIC_CHAT_KEY || 'DSChatClient',
+        JSON.stringify(dataSaved),
+      );
+    }
   }
 
   function scrollToBottom() {
@@ -178,7 +176,7 @@ const ChatDialog = () => {
       registerListener();
       socket.emit(
         'userRequestToChat',
-        { userName: userNickname, instanceId: socket.id },
+        { userName: currentChatInfo.nickname, instanceId: socket.id },
         (res: KeyValue) => {
           if (!res.roomName) {
             setChatStatus({
@@ -194,7 +192,10 @@ const ChatDialog = () => {
               },
             );
           } else {
-            setCurrentChatRoomName(res.roomName);
+            setCurrentChatInfo((prev) => ({
+              ...prev,
+              roomName: res.roomName,
+            }));
             setChatStatus({
               ...chatStatus,
               isCanNotChat: false,
@@ -206,7 +207,7 @@ const ChatDialog = () => {
                 instanceList: [socket.id],
                 roomName: res.roomName,
                 operator: '',
-                nickname: userNickname,
+                nickname: currentChatInfo.nickname,
               }),
             );
           }
@@ -220,20 +221,20 @@ const ChatDialog = () => {
       'sendNewMessage',
       {
         message: currentMessage,
-        from: userNickname,
-        roomName: currentChatRoomName,
+        from: currentChatInfo.nickname,
+        roomName: currentChatInfo.roomName,
         instanceId: socket.id,
       },
       (res: boolean) => {
         if (res) {
-          setCurrentMessage('');
-          setMessageList((current) => {
-            current.push({
+          setMessageList((prev) => [
+            ...prev,
+            {
               fromSelf: true,
               message: currentMessage,
-            });
-            return current;
-          });
+            },
+          ]);
+          setCurrentMessage('');
           setTimeout(() => {
             scrollToBottom();
           });
@@ -250,7 +251,10 @@ const ChatDialog = () => {
       isWaitingOperatorToChat: false,
       isOperatorJoined: false,
     });
-    setCurrentOperatorName('');
+    setCurrentChatInfo((prev) => ({
+      ...prev,
+      operatorName: '',
+    }));
     setMessageList([]);
     setIsShowFullWindow(false);
     localStorage.setItem(
@@ -263,7 +267,7 @@ const ChatDialog = () => {
     socket.emit(
       'customerExitChat',
       {
-        roomName: currentChatRoomName,
+        roomName: currentChatInfo.roomName,
         instanceId: socket.id,
       },
       (res: boolean) => {
@@ -294,7 +298,7 @@ const ChatDialog = () => {
           <div className="lg:h-[500px] h-[70vh] w-[90vw] lg:w-[400px] bg-gray-300 rounded-lg flex flex-col justify-between">
             <div className="flex justify-between items-center px-2 pt-2">
               <span className="text-lg ml-2 font-semibold">
-                {currentOperatorName || ''}
+                {currentChatInfo.operatorName || ''}
               </span>
 
               <div>
@@ -322,8 +326,13 @@ const ChatDialog = () => {
                 <span className="p-input-icon-left mb-4">
                   <i className="pi pi-user" />
                   <InputText
-                    value={userNickname}
-                    onChange={(e) => setUserNickname(e.target.value)}
+                    value={currentChatInfo.nickname}
+                    onChange={(e) =>
+                      setCurrentChatInfo((prev) => ({
+                        ...prev,
+                        nickname: e.target.value,
+                      }))
+                    }
                     placeholder="How could we call you?"
                   />
                 </span>

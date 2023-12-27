@@ -20,6 +20,12 @@ export default class MyDocument extends Document {
             crossOrigin="anonymous"
             referrerPolicy="no-referrer"
           />
+          <link rel="manifest" href="/manifest.json" />
+          <link
+            rel="apple-touch-icon"
+            href="/icon/android-launchericon-512-512.png"
+          ></link>
+          <meta name="theme-color" content="#000" />
         </Head>
         <body>
           <Main />

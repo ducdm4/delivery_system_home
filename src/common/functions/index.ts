@@ -1,6 +1,8 @@
 import { KeyValue } from '../config/interfaces';
 import { ChangeEvent } from 'react';
 import { imageType } from '../config/constant';
+import { getMessaging, onMessage } from 'firebase/messaging';
+import firebaseApp from '../utils/firebase/firebase';
 
 export const validateEmail = (email: string) => {
   return email

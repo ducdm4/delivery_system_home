@@ -2,7 +2,7 @@ import { Button } from 'primereact/button';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { KeyValue } from '../../config/interfaces';
 import ParcelItem from './parcelItem';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox';
 import { InputNumber } from 'primereact/inputnumber';
 import { Divider } from 'primereact/divider';
@@ -11,6 +11,9 @@ import InputInfoPopup from './inputInfoPopup';
 import { getQuoteInfo } from '../../../features/order/orderSlice';
 import { numberWithCommas, validateImageFile } from '../../functions';
 import { usePrevious } from '../../hooks/usePrevious';
+import { Messaging, getMessaging, getToken } from 'firebase/messaging';
+import firebaseApp from '../../utils/firebase/firebase';
+import { useRegisterNotification } from '../../hooks/useRegisterNotification';
 
 interface Props {
   inputs: KeyValue;
@@ -52,10 +55,18 @@ function OrderStepOne({
     return <span className={'text-sm text-red-700'}>Please select!</span>;
   }
 
+  const computedSenderAddress = useMemo(() => {
+    return computeAddress(inputs.pickupAddress);
+  }, [inputs.pickupAddress]);
+
+  const computedReceiverAddress = useMemo(() => {
+    return computeAddress(inputs.dropOffAddress);
+  }, [inputs.dropOffAddress]);
+
   function addNewParcel() {
-    const newParcels: Array<KeyValue> = [].concat(inputs.parcels);
-    newParcels.push(initParcelItem);
     setInputs((old: KeyValue) => {
+      const newParcels: KeyValue[] = [].concat(old.parcels);
+      newParcels.push(initParcelItem);
       return {
         ...old,
         parcels: newParcels,
@@ -63,10 +74,11 @@ function OrderStepOne({
     });
   }
 
-  const computeUserInfo = (key: string) => {
+  const calNameMailPhone = (key: string) => {
     const name = inputs[`${key}Name`];
     const mail = inputs[`${key}Email`];
     const phone = inputs[`${key}Phone`];
+
     if (name) {
       return (
         <>
@@ -77,6 +89,14 @@ function OrderStepOne({
     }
     return <span className={'text-sm text-red-700'}>Please select!</span>;
   };
+
+  const computeReceiverUserInfo = useMemo(() => {
+    return calNameMailPhone('receiver');
+  }, [inputs.receiverName, inputs.receiverMail, inputs.receiverPhone]);
+
+  const computeSenderUserInfo = useMemo(() => {
+    return calNameMailPhone('sender');
+  }, [inputs.senderName, inputs.senderEmail, inputs.senderPhone]);
 
   function prepareShowPopup(key: string) {
     setPopupData({
@@ -112,9 +132,9 @@ function OrderStepOne({
     });
   }
 
-  const displayShippingFare = () => {
+  const displayShippingFare = useMemo(() => {
     return numberWithCommas(inputs.shippingFare);
-  };
+  }, [inputs.shippingFare]);
 
   function processToNextStep() {
     if (validateParcel()) {
@@ -160,6 +180,39 @@ function OrderStepOne({
     }
   }, [inputs.parcels]);
 
+  async function didCheckReceiveNotification(checked: boolean) {
+    customSetInputs('receiveNotification', checked);
+    if (checked) {
+      try {
+        const messagingService = getMessaging(firebaseApp);
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+          const swRegistration = await navigator.serviceWorker.register(
+            '/firebase-cloud-messaging-push-scope/firebase-messaging-sw.js',
+          );
+          // Retrieve the notification permission status
+          Notification.requestPermission().then((res) => {
+            if (res === 'granted') {
+              try {
+                getToken(messagingService, {
+                  vapidKey:
+                    'BCgZ9r3q-8bRYuPJam_FEQlgP3BkeqrvP8WdYa3j-yPjMj9DvQUO6urn7abRl6S1fn5pYtSwsfL1ARc7wx16fyw',
+                  serviceWorkerRegistration: swRegistration,
+                }).then((resToken) => {
+                  console.log('FCM token:', resToken);
+                  if (resToken) {
+                    customSetInputs('notificationToken', resToken);
+                  }
+                });
+              } catch (e) {}
+            }
+          });
+        }
+      } catch (error) {
+        console.log('An error occurred while retrieving token:', error);
+      }
+    }
+  }
+
   return (
     <>
       <div
@@ -179,7 +232,7 @@ function OrderStepOne({
                 <label className={'text-gray-500'} htmlFor="senderPhone">
                   Sender info:
                 </label>
-                <div className="text-xl">{computeUserInfo('sender')}</div>
+                <div className="text-xl">{computeSenderUserInfo}</div>
               </div>
               <Button
                 onClick={() => prepareShowPopup('sender')}
@@ -193,9 +246,7 @@ function OrderStepOne({
                 <label className={'text-gray-500'} htmlFor="senderPhone">
                   Pickup address:
                 </label>
-                <p className="text-xl">
-                  {computeAddress(inputs.pickupAddress)}
-                </p>
+                <p className="text-xl">{computedSenderAddress}</p>
               </div>
             </div>
           </div>
@@ -211,7 +262,7 @@ function OrderStepOne({
                   <label className={'text-gray-500'} htmlFor="senderPhone">
                     Recipient info:
                   </label>
-                  <div className="text-xl">{computeUserInfo('receiver')}</div>
+                  <div className="text-xl">{computeReceiverUserInfo}</div>
                 </div>
                 <Button
                   onClick={() => prepareShowPopup('receiver')}
@@ -225,9 +276,7 @@ function OrderStepOne({
                   <label className={'text-gray-500'} htmlFor="senderPhone">
                     Drop-off address:
                   </label>
-                  <p className="text-xl">
-                    {computeAddress(inputs.dropOffAddress)}
-                  </p>
+                  <p className="text-xl">{computedReceiverAddress}</p>
                 </div>
               </div>
             </div>
@@ -301,6 +350,18 @@ function OrderStepOne({
                 I'd like to take parcel to station by my self (faster delivery)
               </label>
             </div>
+            <div className={'mt-4'}>
+              <Checkbox
+                name="receiveNotification"
+                onChange={(e) =>
+                  didCheckReceiveNotification(e.checked as boolean)
+                }
+                checked={inputs.receiveNotification}
+              />
+              <label htmlFor="isTakeParcelMySelf" className="ml-2 text-sm">
+                I'd like to receive news about my order
+              </label>
+            </div>
             <div className={'pt-8'}>
               <span className="p-float-label">
                 <InputNumber
@@ -321,7 +382,7 @@ function OrderStepOne({
             </div>
             <div className={'flex justify-between text-xl mt-4'}>
               <span className={'font-bold'}>Shipping fee:</span>
-              <span>{displayShippingFare()}&#8363;</span>
+              <span>{displayShippingFare}&#8363;</span>
             </div>
             <div className={'text-right mt-10'}>
               {isShowGetQuote.sender && isShowGetQuote.receiver && (

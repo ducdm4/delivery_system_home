@@ -1,3 +1,4 @@
+import { getMessaging, onMessage } from 'firebase/messaging';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 

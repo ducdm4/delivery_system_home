@@ -15,12 +15,14 @@ import Head from 'next/head';
 import Footer from './footer';
 import { getAllConfigInfo } from '../../../features/config/configSlice';
 import ChatDialog from '../chat/ChatDialog';
+import { useRegisterNotification } from '../../hooks/useRegisterNotification';
 
 export default function Layout({ children }: PropsWithChildren) {
   const userInfo = useAppSelector(userLoggedIn);
   const dispatch = useAppDispatch();
 
   const router = useRouter();
+  const isCalled = useRegisterNotification();
 
   if (typeof window !== 'undefined') {
     useLayoutEffect(() => {
@@ -38,13 +40,6 @@ export default function Layout({ children }: PropsWithChildren) {
 
   return (
     <>
-      <Head>
-        <link
-          id="theme-link"
-          rel="stylesheet"
-          href="/themes/lara-light-blue/theme.css"
-        />
-      </Head>
       <main className={'bg-gray-100'}>
         {header()}
         <div className={'flex '}>

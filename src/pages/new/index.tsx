@@ -48,6 +48,8 @@ const NewOrderPage: NextPage = () => {
     parcels: [initParcelItem],
     dropOffAddress: initAddressState,
     pickupAddress: initAddressState,
+    receiveNotification: false,
+    notificationToken: '',
   };
 
   const [inputs, setInputs] = useState(initState);
