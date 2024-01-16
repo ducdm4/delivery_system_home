@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { InputNumber } from 'primereact/inputnumber';
-import { useEffect, useState } from 'react';
+import { lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   trackingOrder,
   orderLoading,
@@ -10,11 +10,16 @@ import {
 import { useAppDispatch, useAppSelector } from '../../common/hooks';
 import { KeyValue } from '../../common/config/interfaces';
 import { format } from 'date-fns';
-import { ORDER_STATUS } from '../../common/config/constant';
+import { CALL_STATUS, ORDER_STATUS } from '../../common/config/constant';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dialog } from 'primereact/dialog';
 import router from 'next/router';
 import { toast } from 'react-toastify';
+import CallDialog from '../../common/components/call/CallDialog';
+import { socket } from '../../common/config/socket';
+// import { Peer } from 'peerjs';
+import Head from 'next/head';
+import dynamic from 'next/dynamic';
 
 const TrackingPage: NextPage = () => {
   const [trackingId, setTrackingId] = useState(null as number | null);
@@ -126,8 +131,142 @@ const TrackingPage: NextPage = () => {
     return '';
   };
 
+  const [callInfo, setCallInfo] = useState({
+    isShowDialog: false,
+    connectingState: CALL_STATUS.CHECKING_SHIPPER_ONLINE,
+  });
+
+  function didClickCallShipper() {
+    console.log('socket', socket);
+    if (!socket.connected) {
+      socket.connect();
+    }
+    setTimeout(() => {
+      handleSendRequestCall();
+    }, 400);
+  }
+
+  function handleSendRequestCall() {
+    console.log('socket.id', socket.id);
+    socket.emit(
+      'customerRequestCallShipper',
+      {
+        instanceId: socket.id,
+        trackingId: trackingId,
+      },
+      (res: boolean) => {
+        if (res) {
+          setCallInfo(() => ({
+            isShowDialog: true,
+            connectingState: CALL_STATUS.CONNECTING_TO_SHIPPER,
+          }));
+          console.log('callInfo. 22', callInfo.connectingState);
+        } else {
+          toast('Shipper is not online yet, try again later', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'error',
+          });
+        }
+      },
+    );
+  }
+
+  const checkAbleToConnect = useCallback(() => {
+    if (callInfo.connectingState === CALL_STATUS.CONNECTING_TO_SHIPPER) {
+      setCallInfo((current) => ({
+        ...current,
+        connectingState: CALL_STATUS.SHIPPER_NOT_ONLINE,
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (callInfo.connectingState === CALL_STATUS.CONNECTING_TO_SHIPPER) {
+      setTimeout(() => {
+        console.log('callInfo.connectingState', callInfo.connectingState);
+        checkAbleToConnect();
+      }, 3000);
+    }
+    // if (callInfo.connectingState === CALL_STATUS.SHIPPER_NOT_ONLINE) {
+    console.log('callInfo.SHIPPER_NOT_ONLINE', callInfo.connectingState);
+    // }
+  }, [callInfo.connectingState]);
+
+  useEffect(() => {
+    socket.on('shipperCanJoinCall', (peer: KeyValue) => {
+      setCallInfo((current) => ({
+        ...current,
+        connectingState: CALL_STATUS.CONNECTED_TO_SHIPPER,
+      }));
+
+      audioCall(peer.peerId);
+      console.log('peer', peer.peerId);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const audioCall = useCallback((peerId: string) => {
+    if (typeof window !== 'undefined' && window.document) {
+      if (peerId) {
+        const Peer = require('peerjs').default;
+        const peer = new Peer();
+
+        setTimeout(() => {
+          console.log('peer own id', peer.id);
+          const getMedia = navigator.mediaDevices.getUserMedia({
+            video: false,
+            audio: true,
+          });
+          getMedia.then(
+            (stream) => {
+              // const audioEle = document.getElementById(
+              //   'audio-call',
+              // ) as HTMLAudioElement;
+              // if (videoId) {
+              //   videoId.srcObject = stream;
+              // }
+              console.log('peer peer id', peer);
+              console.log('peer peer stream', stream);
+              console.log('peer peer peerId', peerId);
+              const call = peer.call(peerId, stream);
+              call.on('stream', (localStream: MediaStream) => {
+                console.log('localStream', localStream);
+                // Show stream in some <video> element.
+                const audioElement = document.getElementById(
+                  'call-play',
+                ) as HTMLAudioElement;
+                if (audioElement) {
+                  audioElement.srcObject = stream;
+                }
+                // videoContainer.value!.srcObject = remoteStream
+              });
+            },
+            (err) => {
+              console.error('Failed to get local stream', err);
+            },
+          );
+        }, 500);
+      }
+    }
+  }, []);
+
+  function userDidEndCall() {
+    setCallInfo(() => ({
+      isShowDialog: false,
+      connectingState: 0,
+    }));
+    socket.disconnect();
+  }
+
   return (
     <>
+      <Head>
+        <title>Track your delivery | Delivery system</title>
+      </Head>
       <div className="bg-gray-50 border p-4 lg:p-10 mt-4 gap-4 flex flex-col items-center justify-center w-[100vw] lg:w-auto">
         <span>Unique Tracking ID:</span>
         <div>
@@ -151,7 +290,7 @@ const TrackingPage: NextPage = () => {
             trackingList[trackingList.length - 1].status ===
               ORDER_STATUS.ORDER_ON_THE_WAY_TO_RECEIVER && (
               <button
-                onClick={() => didClickFindOrder()}
+                onClick={() => didClickCallShipper()}
                 className="bg-green-500 text-white px-4 lg:px-8 lg:py-3 py-2 ml-2 rounded-md shadow-md text-sm lg:text-md"
               >
                 CALL SHIPPER
@@ -182,7 +321,10 @@ const TrackingPage: NextPage = () => {
       {trackingList.length > 0 && (
         <div className="bg-gray-50 border py-10 lg:px-32 px-4 mt-4">
           {trackingList.map((item: KeyValue, index) => (
-            <div className="w-full grid grid-cols-8 min-h-[60px] border-b">
+            <div
+              className="w-full grid grid-cols-8 min-h-[60px] border-b"
+              key={index}
+            >
               <div className="col-span-2 border-r flex items-center justify-center text-gray-500 lg:text-md text-sm lg:w-auto w-30">
                 {format(new Date(item.createdAt), 'yyyy-MM-dd HH:mm')}
               </div>
@@ -223,6 +365,14 @@ const TrackingPage: NextPage = () => {
           </button>
         </div>
       </Dialog>
+
+      {callInfo.isShowDialog && (
+        <CallDialog
+          trackingId={`${trackingId}`}
+          callInfo={callInfo}
+          userDidEndCall={userDidEndCall}
+        ></CallDialog>
+      )}
     </>
   );
 };

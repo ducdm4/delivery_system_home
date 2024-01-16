@@ -6,7 +6,6 @@ import {
   addressInputRef,
   KeyValue,
 } from '../../config/interfaces';
-import { InputsContext } from '../../../pages/new';
 import ContactPopup from './contactPopup';
 import AddressPopup from './addressPopup';
 import { Divider } from 'primereact/divider';

@@ -1,34 +1,15 @@
-import React, {
-  PropsWithChildren,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import {
-  userLoggedIn,
-  verifyUserLogin,
-} from '../../../features/auth/authSlice';
-import { useRouter } from 'next/router';
+import React, { PropsWithChildren, useLayoutEffect } from 'react';
+import { useAppDispatch } from '../../hooks';
 import HeaderForUser from './headerForUser';
-import Head from 'next/head';
 import Footer from './footer';
 import { getAllConfigInfo } from '../../../features/config/configSlice';
 import ChatDialog from '../chat/ChatDialog';
-import { useRegisterNotification } from '../../hooks/useRegisterNotification';
 
 export default function Layout({ children }: PropsWithChildren) {
-  const userInfo = useAppSelector(userLoggedIn);
   const dispatch = useAppDispatch();
-
-  const router = useRouter();
-  const isCalled = useRegisterNotification();
 
   if (typeof window !== 'undefined') {
     useLayoutEffect(() => {
-      const token = localStorage.getItem(
-        process.env.NEXT_PUBLIC_API_KEY || 'DSAccessToken',
-      );
       const getConfig = dispatch(getAllConfigInfo()).unwrap();
       getConfig.then();
     }, []);

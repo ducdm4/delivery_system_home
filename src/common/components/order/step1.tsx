@@ -2,18 +2,17 @@ import { Button } from 'primereact/button';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { KeyValue } from '../../config/interfaces';
 import ParcelItem from './parcelItem';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox';
 import { InputNumber } from 'primereact/inputnumber';
 import { Divider } from 'primereact/divider';
-import { useAppSelector, useAppDispatch } from '../../hooks';
+import { useAppDispatch } from '../../hooks';
 import InputInfoPopup from './inputInfoPopup';
 import { getQuoteInfo } from '../../../features/order/orderSlice';
 import { numberWithCommas, validateImageFile } from '../../functions';
 import { usePrevious } from '../../hooks/usePrevious';
-import { Messaging, getMessaging, getToken } from 'firebase/messaging';
+import { getMessaging, getToken } from 'firebase/messaging';
 import firebaseApp from '../../utils/firebase/firebase';
-import { useRegisterNotification } from '../../hooks/useRegisterNotification';
 
 interface Props {
   inputs: KeyValue;
@@ -189,23 +188,23 @@ function OrderStepOne({
           const swRegistration = await navigator.serviceWorker.register(
             '/firebase-cloud-messaging-push-scope/firebase-messaging-sw.js',
           );
-          // Retrieve the notification permission status
-          Notification.requestPermission().then((res) => {
-            if (res === 'granted') {
-              try {
-                getToken(messagingService, {
-                  vapidKey:
-                    'BCgZ9r3q-8bRYuPJam_FEQlgP3BkeqrvP8WdYa3j-yPjMj9DvQUO6urn7abRl6S1fn5pYtSwsfL1ARc7wx16fyw',
-                  serviceWorkerRegistration: swRegistration,
-                }).then((resToken) => {
-                  console.log('FCM token:', resToken);
-                  if (resToken) {
-                    customSetInputs('notificationToken', resToken);
-                  }
-                });
-              } catch (e) {}
-            }
-          });
+          setTimeout(() => {
+            Notification.requestPermission().then((res) => {
+              if (res === 'granted') {
+                try {
+                  getToken(messagingService, {
+                    vapidKey:
+                      'BCgZ9r3q-8bRYuPJam_FEQlgP3BkeqrvP8WdYa3j-yPjMj9DvQUO6urn7abRl6S1fn5pYtSwsfL1ARc7wx16fyw',
+                    serviceWorkerRegistration: swRegistration,
+                  }).then((resToken) => {
+                    if (resToken) {
+                      customSetInputs('notificationToken', resToken);
+                    }
+                  });
+                } catch (e) {}
+              }
+            });
+          }, 500);
         }
       } catch (error) {
         console.log('An error occurred while retrieving token:', error);
