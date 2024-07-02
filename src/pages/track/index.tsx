@@ -194,14 +194,19 @@ const TrackingPage: NextPage = () => {
   }, [callInfo.connectingState]);
 
   useEffect(() => {
-    socket.on('shipperCanJoinCall', (peer: KeyValue) => {
+    socket.on('shipperCanJoinCall', (peerClientInfo: KeyValue) => {
       setCallInfo((current) => ({
         ...current,
         connectingState: CALL_STATUS.CONNECTED_TO_SHIPPER,
       }));
+      const Peer = require('peerjs').default;
+      const peerLocal = new Peer();
 
-      audioCall(peer.peerId);
-      console.log('peer', peer.peerId);
+      setTimeout(() => {
+        audioCall(peerClientInfo.peerId, peerLocal);
+      }, 1000);
+
+      console.log('peer', peerClientInfo.peerId);
     });
 
     return () => {
@@ -209,14 +214,17 @@ const TrackingPage: NextPage = () => {
     };
   }, []);
 
-  const audioCall = useCallback((peerId: string) => {
+  const [peer, setPeer] = useState<any>();
+
+  const audioCall = useCallback((peerId: string, peerInstance: any) => {
+    console.log('audioCall triggerd');
     if (typeof window !== 'undefined' && window.document) {
+      console.log('ducdm 1', peerInstance);
       if (peerId) {
-        const Peer = require('peerjs').default;
-        const peer = new Peer();
+        // setPeer(peerLocal);
 
         setTimeout(() => {
-          console.log('peer own id', peer.id);
+          console.log('peer own id', peerInstance);
           const getMedia = navigator.mediaDevices.getUserMedia({
             video: false,
             audio: true,
@@ -232,7 +240,9 @@ const TrackingPage: NextPage = () => {
               console.log('peer peer id', peer);
               console.log('peer peer stream', stream);
               console.log('peer peer peerId', peerId);
-              const call = peer.call(peerId, stream);
+
+              const call = peerInstance.call(peerId, stream);
+              console.log('peer peer call', call);
               call.on('stream', (localStream: MediaStream) => {
                 console.log('localStream', localStream);
                 // Show stream in some <video> element.
@@ -249,7 +259,7 @@ const TrackingPage: NextPage = () => {
               console.error('Failed to get local stream', err);
             },
           );
-        }, 500);
+        }, 1000);
       }
     }
   }, []);
